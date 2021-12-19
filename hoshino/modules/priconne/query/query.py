@@ -20,7 +20,7 @@ def get_support_rank(t: datetime, server):
     return rank
 
 
-@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
+#@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
@@ -98,7 +98,7 @@ YUKARI_SHEET = f'''
 ※对面羊驼或中后卫坦 有可能歪
 ※我方羊驼算一号位
 ※图片搬运自漪夢奈特'''
-@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
+#@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
 async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
     await util.silence(ev, 60)
@@ -115,7 +115,7 @@ async def dragon(bot, ev):
     await util.silence(ev, 60)
 
 
-@sv.on_fullmatch('千里眼')
+#@sv.on_fullmatch('千里眼')
 async def future_gacha(bot, ev):
     await bot.send(ev, "亿里眼·一之章 bbs.nga.cn/read.php?tid=21317816\n亿里眼·二之章 bbs.nga.cn/read.php?tid=25358671")
     await util.silence(ev, 60)

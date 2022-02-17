@@ -1,4 +1,5 @@
 import random
+import requests
 
 from hoshino import util
 from .. import chara
@@ -19,7 +20,11 @@ class Gacha(object):
 
 
     def load_pool(self, pool_name: str):
-        config = util.load_config(__file__)
+        #config = util.load_config(__file__)
+        # JAG: Fetch gacha data from url
+        resp = requests.get(
+                'https://api.redive.lolikon.icu/gacha/default_gacha.json')
+        config = resp.json()
         pool = config[pool_name]
         self.up_prob = pool["up_prob"]
         self.s3_prob = pool["s3_prob"]
@@ -48,13 +53,14 @@ class Gacha(object):
         total_ = s3_prob + s2_prob + s1_prob
         pick = random.randint(1, total_)
         if pick <= up_prob:
-            return chara.fromname(random.choice(self.up), 3), 100
+            # JAG: Change fromname to fromid
+            return chara.fromid(random.choice(self.up), 3), 100
         elif pick <= s3_prob:
-            return chara.fromname(random.choice(self.star3), 3), 50
+            return chara.fromid(random.choice(self.star3), 3), 50
         elif pick <= s2_prob + s3_prob:
-            return chara.fromname(random.choice(self.star2), 2), 10
+            return chara.fromid(random.choice(self.star2), 2), 10
         else:
-            return chara.fromname(random.choice(self.star1), 1), 1
+            return chara.fromid(random.choice(self.star1), 1), 1
 
 
     def gacha_ten(self):

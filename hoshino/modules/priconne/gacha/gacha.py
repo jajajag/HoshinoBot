@@ -17,7 +17,7 @@ class Gacha(object):
             self.tenjou_line = 200
             self.tenjou_rate = '24.54%'
         self.config_flag = True if config else False
-        self.load_pool(pool_name)
+        self.load_pool(pool_name, config)
 
 
     def load_pool(self, pool_name: str, config):

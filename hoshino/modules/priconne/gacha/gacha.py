@@ -25,6 +25,8 @@ class Gacha(object):
         resp = requests.get(
                 'https://api.redive.lolikon.icu/gacha/default_gacha.json')
         config = resp.json()
+        # Replace all with mix
+        config['MIX'] = config.pop('ALL')
         pool = config[pool_name]
         self.up_prob = pool["up_prob"]
         self.s3_prob = pool["s3_prob"]

@@ -1,4 +1,5 @@
 import random
+import requests
 
 from hoshino import util
 from .. import chara
@@ -6,7 +7,7 @@ from .. import chara
 
 class Gacha(object):
 
-    def __init__(self, pool_name: str = "MIX"):
+    def __init__(self, pool_name: str = "MIX", config=None):
         super().__init__()
         self.pool_name = pool_name
         if pool_name == 'BL':
@@ -16,11 +17,13 @@ class Gacha(object):
             self.tenjou_line = 200
             self.tenjou_rate = '24.54%'
         self.memo_pieces = 200 if (pool_name == 'JP' or pool_name == 'MIX') else 100
-        self.load_pool(pool_name)
+        self.config_flag = True if config else False
+        self.load_pool(pool_name, config)
 
 
-    def load_pool(self, pool_name: str):
-        config = util.load_config(__file__)
+    def load_pool(self, pool_name: str, config):
+        if not self.config_flag:
+            config = util.load_config(__file__)
         pool = config[pool_name]
         self.up_prob = pool["up_prob"]
         self.s3_prob = pool["s3_prob"]
@@ -49,13 +52,26 @@ class Gacha(object):
         total_ = s3_prob + s2_prob + s1_prob
         pick = random.randint(1, total_)
         if pick <= up_prob:
-            return chara.fromname(random.choice(self.up), 3), 100
+            # JAG: Change fromname to fromid if we fetch data from url
+            if self.config_flag:
+                return chara.fromid(random.choice(self.up), 3), 100
+            else:
+                return chara.fromname(random.choice(self.up), 3), 100
         elif pick <= s3_prob:
-            return chara.fromname(random.choice(self.star3), 3), 50
+            if self.config_flag:
+                return chara.fromid(random.choice(self.star3), 3), 50
+            else:
+                return chara.fromname(random.choice(self.star3), 3), 50
         elif pick <= s2_prob + s3_prob:
-            return chara.fromname(random.choice(self.star2), 2), 10
+            if self.config_flag:
+                return chara.fromid(random.choice(self.star2), 2), 10
+            else:
+                return chara.fromname(random.choice(self.star2), 2), 10
         else:
-            return chara.fromname(random.choice(self.star1), 1), 1
+            if self.config_flag:
+                return chara.fromid(random.choice(self.star1), 1), 1
+            else:
+                return chara.fromname(random.choice(self.star1), 1), 1
 
 
     def gacha_ten(self):

@@ -1,3 +1,4 @@
+import asyncio
 import itertools
 from datetime import datetime
 from hoshino import util, R
@@ -119,3 +120,10 @@ async def dragon(bot, ev):
 async def future_gacha(bot, ev):
     await bot.send(ev, "亿里眼·一之章 bbs.nga.cn/read.php?tid=21317816\n亿里眼·二之章 bbs.nga.cn/read.php?tid=25358671")
     await util.silence(ev, 60)
+
+# 申请装备了捏
+@sv.on_fullmatch('申请了捏')
+async def apply_equip(bot, ev):
+    # Sleep for 8 hours
+    await asyncio.sleep(8 * 60 * 60)
+    await bot.send(ev, "申请装备了捏", at_sender=True)

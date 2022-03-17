@@ -124,6 +124,7 @@ async def future_gacha(bot, ev):
 # 申请装备了捏
 @sv.on_fullmatch('申请了捏')
 async def apply_equip(bot, ev):
+    await bot.send(ev, "好的捏")
     # Sleep for 8 hours
     await asyncio.sleep(8 * 60 * 60)
     await bot.send(ev, "申请装备了捏", at_sender=True)

@@ -12,7 +12,7 @@ TOP_MANUAL = '''
 (国|台)服新闻：新闻
 (国|台)千里眼：千里眼
 怎么拆：JJC阵容查询
-@nnk 抽签：如抽签，抽中二签
+@nnk 抽签：抽签/抽中二签
 选图(列表|XX)：表情模板
 XX.jpg：生成XX的表情
 @nnk (来一井|十连|单抽)
@@ -20,11 +20,11 @@ XX.jpg：生成XX的表情
 【查详细用法】
 竞技场帮助：台服JJC提醒
 马娘帮助：马娘相关
-帮助clan_rank_tw：台服公会查询
+帮助clan_rank_tw：台公会
 帮助pcr会战：会战相关
 【管理】
 lssv：查看模块的开关状态
-(启|禁)用+service名：开关模块
+(启|禁)用XX：开关模块
 ※Hoshino开源Project：
 github.com/Ice-Cirno/HoshinoBot
 '''.strip()

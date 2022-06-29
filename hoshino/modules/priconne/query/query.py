@@ -1,11 +1,12 @@
+import asyncio
 import itertools
 from datetime import datetime
 from hoshino import util, R
 from hoshino.typing import CQEvent
 from . import sv
 
-# rank_cn = '14-5'
-# pcn = R.img(f'priconne/quick/r{rank_cn}-cn-0.png').cqcode
+rank_cn = '14-5'
+pcn = R.img(f'priconne/quick/r{rank_cn}-cn-0.png').cqcode
 
 
 def get_support_rank(t: datetime, server):
@@ -20,7 +21,7 @@ def get_support_rank(t: datetime, server):
     return rank
 
 
-@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
+#@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
@@ -37,10 +38,9 @@ async def rank_sheet(bot, ev):
     elif is_tw:
         await bot.send(ev, f"\n休闲：输出拉满 辅助R{get_support_rank(datetime.now(), 'tw')}-0\n一档：问你家会长", at_sender=True)
     elif is_cn:
-        await bot.send(ev, "https://www.bilibili.com/read/cv16014202", at_sender=True)
-        # msg.append(f'※不定期搬运自nga\n※制作by樱花铁道之夜\nR{rank_cn} rank表：\n{pcn}')
-        # await bot.send(ev, '\n'.join(msg), at_sender=True)
-        # await util.silence(ev, 60)
+        msg.append(f'※不定期搬运自nga\n※制作by樱花铁道之夜\nR{rank_cn} rank表：\n{pcn}')
+        await bot.send(ev, '\n'.join(msg), at_sender=True)
+        await util.silence(ev, 60)
 
 
 @sv.on_fullmatch('jjc', 'JJC', 'JJC作业', 'JJC作业网', 'JJC数据库', 'jjc作业', 'jjc作业网', 'jjc数据库')
@@ -99,7 +99,7 @@ YUKARI_SHEET = f'''
 ※对面羊驼或中后卫坦 有可能歪
 ※我方羊驼算一号位
 ※图片搬运自漪夢奈特'''
-@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
+#@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
 async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
     await util.silence(ev, 60)
@@ -116,7 +116,15 @@ async def dragon(bot, ev):
     await util.silence(ev, 60)
 
 
-@sv.on_fullmatch('千里眼')
+#@sv.on_fullmatch('千里眼')
 async def future_gacha(bot, ev):
     await bot.send(ev, "亿里眼·一之章 bbs.nga.cn/read.php?tid=21317816\n亿里眼·二之章 bbs.nga.cn/read.php?tid=25358671")
     await util.silence(ev, 60)
+
+# 申请装备了捏
+@sv.on_fullmatch('申请了捏')
+async def apply_equip(bot, ev):
+    await bot.send(ev, "好的捏")
+    # Sleep for 8 hours
+    await asyncio.sleep(8 * 60 * 60)
+    await bot.send(ev, "申请装备了捏", at_sender=True)

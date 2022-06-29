@@ -1,5 +1,6 @@
 import os
 import random
+import requests
 from collections import defaultdict
 
 from hoshino import Service, priv, util
@@ -29,7 +30,8 @@ tenjo_limit = DailyNumberLimiter(1)
 JEWEL_EXCEED_NOTICE = f'您今天已经抽过{jewel_limit.max}钻了，欢迎明早5点后再来！'
 TENJO_EXCEED_NOTICE = f'您今天已经抽过{tenjo_limit.max}张天井券了，欢迎明早5点后再来！'
 POOL = ('MIX', 'JP', 'TW', 'BL')
-DEFAULT_POOL = POOL[0]
+# JAG: Change default pool to TW
+DEFAULT_POOL = POOL[2]
 
 _pool_config_file = os.path.expanduser('~/.hoshino/group_pool_config.json')
 _group_pool = {}
@@ -44,6 +46,19 @@ def dump_pool_config():
     with open(_pool_config_file, 'w', encoding='utf8') as f:
         json.dump(_group_pool, f, ensure_ascii=False)
 
+# JAG: Fetch gacha config json from url
+def load_config():
+    try:
+        resp = requests.get(
+                'https://api.redive.lolikon.icu/gacha/default_gacha.json')
+        config = resp.json()
+        # Replace all with mix
+        if 'MIX' not in config: config['MIX'] = config.pop('ALL')
+    except BaseException as e:
+        config = None
+        sv.logger.warning('Cannot load gacha info from url.')
+    return config
+config = load_config()
 
 gacha_10_aliases = ('抽十连', '十连', '十连！', '十连抽', '来个十连', '来发十连', '来次十连', '抽个十连', '抽发十连', '抽次十连', '十连扭蛋', '扭蛋十连',
                     '10连', '10连！', '10连抽', '来个10连', '来发10连', '来次10连', '抽个10连', '抽发10连', '抽次10连', '10连扭蛋', '扭蛋10连')
@@ -52,11 +67,18 @@ gacha_tenjou_aliases = ('抽一井', '来一井', '来发井', '抽发井', '天
 
 @sv.on_fullmatch('卡池资讯', '查看卡池', '看看卡池', '康康卡池', '看看up', '看看UP')
 async def gacha_info(bot, ev: CQEvent):
+    # JAG: Load config when we switch gahca pool
+    global config
+    config = load_config()
+
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid])
+    gacha = Gacha(_group_pool[gid], config)
     up_chara = []
     for x in gacha.up:
-        icon = await chara.fromname(x, star=3).get_icon()
+        if config:
+            icon = await chara.fromid(x, star=3).get_icon()
+        else:
+            icon = await chara.fromname(x, star=3).get_icon()
         up_chara.append(str(icon.cqcode) + x)
     up_chara = '\n'.join(up_chara)
     await bot.send(ev, f"本期卡池主打的角色：\n{up_chara}\nUP角色合计={(gacha.up_prob/10):.1f}% 3★出率={(gacha.s3_prob)/10:.1f}%")
@@ -106,7 +128,7 @@ async def gacha_1(bot, ev: CQEvent):
     jewel_limit.increase(ev.user_id, 150)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid])
+    gacha = Gacha(_group_pool[gid], config)
     chara, hiishi = gacha.gacha_one(gacha.up_prob, gacha.s3_prob, gacha.s2_prob)
     silence_time = hiishi * 60
 
@@ -124,7 +146,7 @@ async def gacha_10(bot, ev: CQEvent):
     jewel_limit.increase(ev.user_id, 1500)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid])
+    gacha = Gacha(_group_pool[gid], config)
     result, hiishi = gacha.gacha_ten()
     silence_time = hiishi * 6 if hiishi < SUPER_LUCKY_LINE else hiishi * 60
 
@@ -156,7 +178,7 @@ async def gacha_tenjou(bot, ev: CQEvent):
     tenjo_limit.increase(ev.user_id)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid])
+    gacha = Gacha(_group_pool[gid], config)
     result = gacha.gacha_tenjou()
     up = len(result['up'])
     s3 = len(result['s3'])
@@ -173,7 +195,8 @@ async def gacha_tenjou(bot, ev: CQEvent):
         pics = []
         for i in range(0, lenth, step):
             j = min(lenth, i + step)
-            pics.append(await chara.gen_team_pic(res[i:j], star_slot_verbose=False))
+            pics.append(
+                    await chara.gen_team_pic(res[i:j], star_slot_verbose=False))
         res = concat_pic(pics)
         res = pic2b64(res)
         res = MessageSegment.image(res)

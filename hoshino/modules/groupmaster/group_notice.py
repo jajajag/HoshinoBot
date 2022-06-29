@@ -3,7 +3,7 @@ import hoshino
 from hoshino import Service, util
 from hoshino.typing import NoticeSession, CQHttpError
 
-sv1 = Service('group-leave-notice', help_='退群通知')
+sv1 = Service('group-leave-notice', help_='退群通知', enable_on_default=False)
 
 @sv1.on_notice('group_decrease.leave')
 async def leave_notice(session: NoticeSession):

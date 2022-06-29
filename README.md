@@ -7,6 +7,11 @@
 
 A QQ-bot for Princess Connect Re:Dive based on [Nonebot](https://github.com/nonebot/nonebot)
 
+加入了一些自用的features：
+* 抽卡模块卡池信息改为从[url](https://api.redive.lolikon.icu/gacha/default_gacha.json)获取
+* 关闭某些默认开启的service（例如news, comic, query）
+* 申请装备了捏（8小时）
+
 <details>
   <summary>开发历史</summary>
 

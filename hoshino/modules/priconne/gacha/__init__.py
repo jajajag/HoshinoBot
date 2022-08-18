@@ -79,7 +79,8 @@ async def gacha_info(bot, ev: CQEvent):
             icon = await chara.fromid(x, star=3).get_icon()
         else:
             icon = await chara.fromname(x, star=3).get_icon()
-        up_chara.append(str(icon.cqcode) + x)
+        #up_chara.append(str(icon.cqcode) + x)
+        up_chara.append(str(icon.cqcode))
     up_chara = '\n'.join(up_chara)
     await bot.send(ev, f"本期卡池主打的角色：\n{up_chara}\nUP角色合计={(gacha.up_prob/10):.1f}% 3★出率={(gacha.s3_prob)/10:.1f}%")
 

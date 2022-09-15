@@ -46,7 +46,7 @@ class Roster:
     def update(self):
         importlib.reload(_pcr_data)
         # JAG: Add alias to roster
-        add_extra_alias(_pcr_data):
+        add_extra_alias(_pcr_data)
         self._roster.clear()
         result = {'success': 0, 'duplicate': 0}
         for idx, names in _pcr_data.CHARA_NAME.items():

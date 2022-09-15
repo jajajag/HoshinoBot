@@ -11,6 +11,8 @@ from hoshino import R, log, sucmd, util, aiorequests
 from hoshino.typing import CommandSession
 
 from . import _pcr_data
+# JAG: Import extra self-designed data
+from . import _pcr_data_extra
 
 logger = log.new_logger('chara', hoshino.config.DEBUG)
 UNKNOWN = 1000
@@ -20,7 +22,14 @@ try:
     gadget_star = R.img('priconne/gadget/star.png').open()
     gadget_star_dis = R.img('priconne/gadget/star_disabled.png').open()
     gadget_star_pink = R.img('priconne/gadget/star_pink.png').open()
-    unknown_chara_icon = R.img(f'priconne/unit/icon_unit_{UNKNOWN}31.png').open()
+    unknown_chara_icon = R.img(
+            f'priconne/unit/icon_unit_{UNKNOWN}31.png').open()
+    # JAG: Append extra name to _pcr_data
+    for key in _pcr_data_extra.CHARA_NAME:
+        if key in _pcr_data.CHARA_NAME:
+            _pcr_data.CHARA_NAME[key] += _pcr_data_extra.CHARA_NAME[key]
+        else:
+            _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
 except Exception as e:
     logger.exception(e)
 

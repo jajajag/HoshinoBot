@@ -11,8 +11,6 @@ from hoshino import R, log, sucmd, util, aiorequests
 from hoshino.typing import CommandSession
 
 from . import _pcr_data
-# JAG: Import extra self-designed data
-from . import _pcr_data_extra
 
 logger = log.new_logger('chara', hoshino.config.DEBUG)
 UNKNOWN = 1000
@@ -24,15 +22,20 @@ try:
     gadget_star_pink = R.img('priconne/gadget/star_pink.png').open()
     unknown_chara_icon = R.img(
             f'priconne/unit/icon_unit_{UNKNOWN}31.png').open()
-    # JAG: Append extra name to _pcr_data
-    for key in _pcr_data_extra.CHARA_NAME:
-        if key in _pcr_data.CHARA_NAME:
-            _pcr_data.CHARA_NAME[key] += _pcr_data_extra.CHARA_NAME[key]
-        else:
-            _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
 except Exception as e:
     logger.exception(e)
 
+def add_extra_alias(_pcr_data):
+    # JAG: Import extra self-designed data
+    from . import _pcr_data_extra
+    # JAG: Append alias to _pcr_data
+    for key in _pcr_data_extra.CHARA_NAME:
+        if key in _pcr_data.CHARA_NAME:
+            for alias in _pcr_data_extra.CHARA_NAME[key]:
+                if alias not in _pcr_data.CHARA_NAME[key]:
+                    _pcr_data.CHARA_NAME[key].append(alias)
+        else:
+            _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
 
 class Roster:
 
@@ -42,6 +45,8 @@ class Roster:
 
     def update(self):
         importlib.reload(_pcr_data)
+        # JAG: Add alias to roster
+        add_extra_alias(_pcr_data):
         self._roster.clear()
         result = {'success': 0, 'duplicate': 0}
         for idx, names in _pcr_data.CHARA_NAME.items():

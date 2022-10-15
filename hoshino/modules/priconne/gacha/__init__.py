@@ -1,9 +1,9 @@
+import asyncio
 import os
 import random
-import requests
 from collections import defaultdict
 
-from hoshino import Service, priv, util
+from hoshino import Service, priv, util, aiorequests, sucmd
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter, concat_pic, pic2b64, silence
 
@@ -46,19 +46,6 @@ def dump_pool_config():
     with open(_pool_config_file, 'w', encoding='utf8') as f:
         json.dump(_group_pool, f, ensure_ascii=False)
 
-# JAG: Fetch gacha config json from url
-def load_config():
-    try:
-        resp = requests.get(
-                'https://api.redive.lolikon.icu/gacha/default_gacha.json')
-        config = resp.json()
-        # Replace all with mix
-        if 'MIX' not in config: config['MIX'] = config.pop('ALL')
-    except BaseException as e:
-        config = None
-        sv.logger.warning('Cannot load gacha info from url.')
-    return config
-config = load_config()
 
 gacha_10_aliases = ('抽十连', '十连', '十连！', '十连抽', '来个十连', '来发十连', '来次十连', '抽个十连', '抽发十连', '抽次十连', '十连扭蛋', '扭蛋十连',
                     '10连', '10连！', '10连抽', '来个10连', '来发10连', '来次10连', '抽个10连', '抽发10连', '抽次10连', '10连扭蛋', '扭蛋10连')
@@ -67,19 +54,14 @@ gacha_tenjou_aliases = ('抽一井', '来一井', '来发井', '抽发井', '天
 
 @sv.on_fullmatch('卡池资讯', '查看卡池', '看看卡池', '康康卡池', '看看up', '看看UP')
 async def gacha_info(bot, ev: CQEvent):
-    # JAG: Load config when we switch gahca pool
-    global config
-    config = load_config()
-
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid], config)
+    gacha = Gacha(_group_pool[gid])
     up_chara = []
     for x in gacha.up:
-        if config:
-            icon = await chara.fromid(x, star=3).get_icon()
-        else:
-            icon = await chara.fromname(x, star=3).get_icon()
+        # JAG: Use chara.fromid instead of chara.fromname
+        icon = await chara.fromid(x, star=3).get_icon()
         #up_chara.append(str(icon.cqcode) + x)
+        # Remove chara name
         up_chara.append(str(icon.cqcode))
     up_chara = '\n'.join(up_chara)
     await bot.send(ev, f"本期卡池主打的角色：\n{up_chara}\nUP角色合计={(gacha.up_prob/10):.1f}% 3★出率={(gacha.s3_prob)/10:.1f}%")
@@ -129,7 +111,7 @@ async def gacha_1(bot, ev: CQEvent):
     jewel_limit.increase(ev.user_id, 150)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid], config)
+    gacha = Gacha(_group_pool[gid])
     chara, hiishi = gacha.gacha_one(gacha.up_prob, gacha.s3_prob, gacha.s2_prob)
     silence_time = hiishi * 60
 
@@ -147,7 +129,7 @@ async def gacha_10(bot, ev: CQEvent):
     jewel_limit.increase(ev.user_id, 1500)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid], config)
+    gacha = Gacha(_group_pool[gid])
     result, hiishi = gacha.gacha_ten()
     silence_time = hiishi * 6 if hiishi < SUPER_LUCKY_LINE else hiishi * 60
 
@@ -179,7 +161,7 @@ async def gacha_tenjou(bot, ev: CQEvent):
     tenjo_limit.increase(ev.user_id)
 
     gid = str(ev.group_id)
-    gacha = Gacha(_group_pool[gid], config)
+    gacha = Gacha(_group_pool[gid])
     result = gacha.gacha_tenjou()
     up = len(result['up'])
     s3 = len(result['s3'])
@@ -196,8 +178,7 @@ async def gacha_tenjou(bot, ev: CQEvent):
         pics = []
         for i in range(0, lenth, step):
             j = min(lenth, i + step)
-            pics.append(
-                    await chara.gen_team_pic(res[i:j], star_slot_verbose=False))
+            pics.append(await chara.gen_team_pic(res[i:j], star_slot_verbose=False))
         res = concat_pic(pics)
         res = pic2b64(res)
         res = MessageSegment.image(res)
@@ -250,3 +231,30 @@ async def kakin(bot, ev: CQEvent):
             count += 1
     if count:
         await bot.send(ev, f"已为{count}位用户充值完毕！谢谢惠顾～")
+
+# JAG: Fetch config from url
+# Modify the previous version to async ver. Borrowed from pcr_data_updater.py
+async def pull_config(sess: CommandSession = None):
+    try:
+        rsp = await aiorequests.get(
+                'https://api.redive.lolikon.icu/gacha/default_gacha.json')
+        rsp.raise_for_status()
+        config = await rsp.json()
+        # Replace all with mix
+        if 'ALL' in config: config['MIX'] = config.pop('ALL')
+        filename = os.path.join(os.path.dirname(__file__), 'config.json')
+        # Dump config dictionary to json file
+        with open(filename, 'w', encoding='utf8') as f:
+            json.dump(config, f)
+    except Exception as e:
+        sv.logger.exception(e)
+        sv.logger.warning('Cannot pull gacha config from url.')
+
+# JAG: Pull config at start
+loop = asyncio.get_event_loop()
+loop.run_until_complete(pull_config())
+
+# Update the config file at 5am or via command
+sucmd('pull-gacha-config', force_private=False,
+        aliases=('更新卡池', '强制更新卡池'))(pull_config)
+sv.scheduled_job('cron', hour=5, jitter=300)(pull_config)

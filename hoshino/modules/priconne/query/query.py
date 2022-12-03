@@ -5,7 +5,7 @@ from hoshino import util, R
 from hoshino.typing import CQEvent
 from . import sv
 
-rank_cn = '14-5'
+rank_cn = '18-5'
 pcn = R.img(f'priconne/quick/r{rank_cn}-cn-0.png').cqcode
 
 
@@ -38,9 +38,10 @@ async def rank_sheet(bot, ev):
     elif is_tw:
         await bot.send(ev, f"\n休闲：输出拉满 辅助R{get_support_rank(datetime.now(), 'tw')}-0\n一档：问你家会长", at_sender=True)
     elif is_cn:
-        msg.append(f'※不定期搬运自nga\n※制作by樱花铁道之夜\nR{rank_cn} rank表：\n{pcn}')
-        await bot.send(ev, '\n'.join(msg), at_sender=True)
-        await util.silence(ev, 60)
+        await bot.send(ev, f"https://www.bilibili.com/read/cv19044402\n{pcn}", at_sender=True)
+        # msg.append(f'※不定期搬运自nga\n※制作by樱花铁道之夜\nR{rank_cn} rank表：\n{pcn}')
+        # await bot.send(ev, '\n'.join(msg), at_sender=True)
+        # await util.silence(ev, 60)
 
 
 @sv.on_fullmatch('jjc', 'JJC', 'JJC作业', 'JJC作业网', 'JJC数据库', 'jjc作业', 'jjc作业网', 'jjc数据库')

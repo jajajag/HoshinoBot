@@ -6,16 +6,12 @@ from .. import chara
 
 class Gacha(object):
 
-    def __init__(self, pool_name: str = "MIX"):
+    def __init__(self, pool_name: str = "JP"):
         super().__init__()
         self.pool_name = pool_name
-        if pool_name == 'BL':
-            self.tenjou_line = 300
-            self.tenjou_rate = '12.16%'
-        else:
-            self.tenjou_line = 200
-            self.tenjou_rate = '24.54%'
-        self.memo_pieces = 200 if (pool_name == 'JP' or pool_name == 'MIX') else 100
+        self.tenjou_line = 200
+        self.tenjou_rate = '24.54%'
+        self.memo_pieces = 200
         self.load_pool(pool_name)
 
 
@@ -32,7 +28,8 @@ class Gacha(object):
         self.star1 = pool["star1"]
 
 
-    def gacha_one(self, up_prob: int, s3_prob: int, s2_prob: int, s1_prob: int = None):
+    def gacha_one(self, up_prob: int, s3_prob: int, s2_prob: int,
+                  s1_prob: int = None):
         '''
         sx_prob: x星概率，要求和为1000
         up_prob: UP角色概率（从3星划出）
@@ -90,7 +87,8 @@ class Gacha(object):
             c, y = self.gacha_one(up, s3, s2, s1)
             if 100 == y:
                 result['up'].append(c)
-                first_up_pos = min(first_up_pos, 10 * ((i+1) // 9) + ((i+1) % 9))
+                first_up_pos = min(
+                        first_up_pos, 10 * ((i+1) // 9) + ((i+1) % 9))
             elif 50 == y:
                 result['s3'].append(c)
             elif 10 == y:

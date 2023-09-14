@@ -1,8 +1,9 @@
 import asyncio
+import json
 import os
 import random
-from collections import defaultdict
 
+from collections import defaultdict
 from hoshino import Service, priv, util, aiorequests, sucmd
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter, concat_pic, pic2b64, silence
@@ -10,11 +11,6 @@ from hoshino.util import DailyNumberLimiter, concat_pic, pic2b64, silence
 from .. import chara
 from .gacha import Gacha
 from .update_init import update
-
-try:
-    import ujson as json
-except:
-    import json
 
 
 sv_help = '''

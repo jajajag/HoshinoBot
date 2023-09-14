@@ -93,6 +93,9 @@ def update_pool_fromdb():
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
 
+check_version()
+update_pool_fromdb()
+
 async def update():
     check_version()
     update_pool_fromdb()

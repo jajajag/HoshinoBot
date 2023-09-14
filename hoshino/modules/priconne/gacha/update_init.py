@@ -6,7 +6,7 @@ from datetime import datetime
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
 
-def check_verison():
+def check_version():
     with open('config.json', 'r') as fp:
         config = json.load(fp)
     # Download version.json

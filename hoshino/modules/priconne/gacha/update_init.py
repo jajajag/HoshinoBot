@@ -15,6 +15,9 @@ def check_version():
     # Download version.json
     response = requests.get(base_url + 'version.json')
     data = response.json()
+    # Check if download is successful
+    if response.status_code != 200:
+        return
     for pool in POOL:
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
@@ -36,6 +39,8 @@ def update_pool_fromdb():
     for pool in POOL:
         # 1. Read all unit data from unit_data table
         conn = sqlite3.connect(db_path.format(pool.lower()))
+        print(db_path.format(pool.lower()))
+        print(conn)
         cursor = conn.cursor()
         cursor.execute('SELECT unit_id, rarity, is_limited FROM unit_data')
         rows = cursor.fetchall()
@@ -45,7 +50,7 @@ def update_pool_fromdb():
         for row in rows:
             unit_id, rarity, is_limited = row
             unit_id = int(unit_id / 100)
-            if unit_id > 1900:
+            if unit_id > 1900 or unit_id == 1703: # jita
                 break
             if is_limited:
                 continue

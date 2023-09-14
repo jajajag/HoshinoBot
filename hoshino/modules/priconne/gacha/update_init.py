@@ -39,20 +39,20 @@ def update_pool_fromdb():
     for pool in POOL:
         # 1. Read all unit data from unit_data table
         conn = sqlite3.connect(db_path.format(pool.lower()))
-        print(db_path.format(pool.lower()))
-        print(conn)
         cursor = conn.cursor()
-        cursor.execute('SELECT unit_id, rarity, is_limited FROM unit_data')
+        cursor.execute(('SELECT cutin_1, rarity, is_limited, move_speed'
+                        ' FROM unit_data'))
         rows = cursor.fetchall()
         # 1.1 Read unit_id from unit_data table
         config[pool]['star1'], config[pool]['star2'] = [], []
         config[pool]['star3'] = []
         for row in rows:
-            unit_id, rarity, is_limited = row
+            unit_id, rarity, is_limited, move_speed = row
             unit_id = int(unit_id / 100)
-            if unit_id > 1900 or unit_id == 1703: # jita
+            # Break if unit_id is over 1900
+            if unit_id > 1900:
                 break
-            if is_limited:
+            if is_limited or move_speed == 0:
                 continue
             elif rarity == 1:
                 config[pool]['star1'].append(unit_id)
@@ -60,7 +60,6 @@ def update_pool_fromdb():
                 config[pool]['star2'].append(unit_id)
             else: # Otherwise the rarity should be 3
                 config[pool]['star3'].append(unit_id)
-            # Break if unit_id is over 190000
         # 2. Read pickup chara data from gacha_exchange_lineup table
         cursor.execute(('SELECT start_time, end_time, unit_id,'
                         'gacha_bonus_id FROM gacha_exchange_lineup'))

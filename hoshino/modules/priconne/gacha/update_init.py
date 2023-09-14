@@ -1,13 +1,16 @@
 import json
+import os
 import requests
 import sqlite3
 from datetime import datetime
 
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
+config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+db_path = os.path.join(os.path.dirname(__file__), 'master_{}.db')
 
 def check_version():
-    with open('config.json', 'r') as fp:
+    with open(config_path, 'r') as fp:
         config = json.load(fp)
     # Download version.json
     response = requests.get(base_url + 'version.json')
@@ -24,20 +27,18 @@ def check_version():
                     fp.write(response.content)
             # Update version in config
             config[pool]['version'] = data[pool]['version']
-    with open('config.json', 'w') as fp:
+    with open(config_path, 'w') as fp:
         json.dump(config, fp)
 
 def update_pool_fromdb():
-    with open('config.json', 'r') as fp:
+    with open(config_path, 'r') as fp:
         config = json.load(fp)
     for pool in POOL:
         # 1. Read all unit data from unit_data table
-        conn = sqlite3.connect('master_{}.db'.format(pool.lower()))
+        conn = sqlite3.connect(db_path.format(pool.lower()))
         cursor = conn.cursor()
         cursor.execute('SELECT unit_id, rarity, is_limited FROM unit_data')
         rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
         # 1.1 Read unit_id from unit_data table
         config[pool]['star1'], config[pool]['star2'] = [], []
         config[pool]['star3'] = []
@@ -56,13 +57,9 @@ def update_pool_fromdb():
                 config[pool]['star3'].append(unit_id)
             # Break if unit_id is over 190000
         # 2. Read pickup chara data from gacha_exchange_lineup table
-        conn = sqlite3.connect('master_{}.db'.format(pool.lower()))
-        cursor = conn.cursor()
         cursor.execute(('SELECT start_time, end_time, unit_id,'
                         'gacha_bonus_id FROM gacha_exchange_lineup'))
         rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
         # 2.1 Find current pickup chara using current datetime
         unit_ids, gacha_bonus_ids = [], []
         for row in rows:
@@ -86,7 +83,9 @@ def update_pool_fromdb():
             if unit_id not in config[pool]['star3']:
                 config[pool]['star3'].append(unit_id)
         config[pool]['up'] = gacha_bonus_ids
-    with open('config.json', 'w') as fp:
+        cursor.close()
+        conn.close()
+    with open(config_path, 'w') as fp:
         json.dump(config, fp)
 
 async def update():

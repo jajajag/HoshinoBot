@@ -70,9 +70,7 @@ async def gacha_info(bot, ev: CQEvent):
         # Remove chara name
         up_chara.append(str(icon.cqcode))
     up_chara = '\n'.join(up_chara)
-    await bot.send(ev, (f"本期卡池主打的角色：\n{up_chara}\n"
-                        "UP角色合计={(gacha.up_prob/10):.1f}% "
-                        "3★出率={(gacha.s3_prob)/10:.1f}%"))
+    await bot.send(ev, f"本期卡池主打的角色：\n{up_chara}\nUP角色合计={(gacha.up_prob/10):.1f}% 3★出率={(gacha.s3_prob)/10:.1f}%")
 
 
 POOL_NAME_TIP = '请选择以下卡池\n> 切换卡池cn\n> 切换卡池jp\n> 切换卡池tw'
@@ -191,11 +189,7 @@ async def gacha_tenjou(bot, ev: CQEvent):
     msg = [
         f"\n素敵な仲間が増えますよ！ {res}",
         f"★★★×{up+s3} ★★×{s2} ★×{s1}",
-        (f"获得记忆碎片×{gacha.memo_pieces*up}"
-         "与女神秘石×{50*(up+s3) + 10*s2 + s1}！\n"
-         "第{result['first_up_pos']}"
-         "抽首次获得up角色") if up else (f"获得女神秘石"
-                                         "{50*(up+s3) + 10*s2 + s1}个！")
+        f"获得记忆碎片×{gacha.memo_pieces*up}与女神秘石×{50*(up+s3) + 10*s2 + s1}！\n第{result['first_up_pos']}抽首次获得up角色" if up else f"获得女神秘石{50*(up+s3) + 10*s2 + s1}个！"
     ]
 
     if up == 0 and s3 == 0:

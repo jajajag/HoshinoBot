@@ -236,10 +236,10 @@ async def kakin(bot, ev: CQEvent):
         await bot.send(ev, f"已为{count}位用户充值完毕！谢谢惠顾～")
 
 # JAG: Pull config at start
-loop = asyncio.get_event_loop()
-loop.run_until_complete(update())
+#loop = asyncio.get_event_loop()
+#loop.run_until_complete(update())
 
 # Update the config file at 5am or via command
 sucmd('pull-gacha-config', force_private=False,
-        aliases=('更新卡池', '强制更新卡池'))(update())
-sv.scheduled_job('cron', hour=5, jitter=300)(update())
+        aliases=('更新卡池', '强制更新卡池'))(update)
+sv.scheduled_job('cron', hour=5, jitter=300)(update)

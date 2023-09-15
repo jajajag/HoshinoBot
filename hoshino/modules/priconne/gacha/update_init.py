@@ -20,6 +20,7 @@ def check_version():
     # Check if download is successful
     if response.status_code != 200:
         hoshino.logger.warning('Failed to download version.json')
+        return
     for pool in POOL:
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:

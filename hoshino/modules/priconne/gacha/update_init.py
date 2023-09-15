@@ -23,7 +23,7 @@ def check_version():
     for pool in POOL:
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
-            response = requests.get(base_url + db_name.format(pool.lower())
+            response = requests.get(base_url + db_name.format(pool.lower()))
             # Download new database if download is successful
             if response.status_code == 200:
                 with open(db_path.format(pool.lower()), 'wb') as fp:

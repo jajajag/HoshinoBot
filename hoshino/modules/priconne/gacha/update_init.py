@@ -1,3 +1,4 @@
+import hoshino
 import json
 import os
 import requests
@@ -7,7 +8,8 @@ from datetime import datetime
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-db_path = os.path.join(os.path.dirname(__file__), 'master_{}.db')
+db_name = 'master_{}.db'
+db_path = os.path.join(os.path.dirname(__file__), db_name)
 
 def check_version():
     with open(config_path, 'r') as fp:
@@ -17,18 +19,19 @@ def check_version():
     data = response.json()
     # Check if download is successful
     if response.status_code != 200:
-        return
+        hoshino.logger.warning('Failed to download version.json')
     for pool in POOL:
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
-            config[pool]['version'] = data[pool]['version']
-            response = requests.get(base_url + db_name)
+            response = requests.get(base_url + db_name.format(pool.lower())
             # Download new database if download is successful
             if response.status_code == 200:
                 with open(db_path.format(pool.lower()), 'wb') as fp:
                     fp.write(response.content)
-            # Update version in config
-            config[pool]['version'] = data[pool]['version']
+                # Update version in config
+                config[pool]['version'] = data[pool]['version']
+            else:
+                hoshino.logger.warning(f'Failed to download {pool} database')
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
 

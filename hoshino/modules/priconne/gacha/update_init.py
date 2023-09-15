@@ -22,11 +22,10 @@ def check_version():
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
             config[pool]['version'] = data[pool]['version']
-            db_name = 'master_{}.db'.format(pool.lower())
             response = requests.get(base_url + db_name)
             # Download new database if download is successful
             if response.status_code == 200:
-                with open(db_name, 'wb') as fp:
+                with open(db_path.format(pool.lower()), 'wb') as fp:
                     fp.write(response.content)
             # Update version in config
             config[pool]['version'] = data[pool]['version']
@@ -91,9 +90,6 @@ def update_pool_fromdb():
         conn.close()
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
-
-check_version()
-update_pool_fromdb()
 
 async def update():
     check_version()

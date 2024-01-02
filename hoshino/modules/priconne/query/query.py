@@ -112,7 +112,7 @@ YUKARI_SHEET = f'''
 ※对面羊驼或中后卫坦 有可能歪
 ※我方羊驼算一号位
 ※图片搬运自漪夢奈特'''
-#@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
+@sv.on_fullmatch(YUKARI_SHEET_ALIAS)
 async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
     await util.silence(ev, 60)
@@ -138,10 +138,10 @@ async def download_image(img_path, url):
 
 async def send_image(url):
     file_name = url.split('/')[-1]
-    img_path = os.path.join(R.img('priconne').path, 'quick/{file_name}')
+    img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
     if not os.path.exists(img_path):
         download_image(img_path, url)
-    return R.img('priconne/quick/{file_name}').cqcode
+    return R.img(f'priconne/quick/{file_name}').cqcode
 
 
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')

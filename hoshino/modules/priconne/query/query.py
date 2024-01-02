@@ -167,7 +167,7 @@ async def future_gacha_bili(bot, ev):
         await ar.fetch_content()
         # Find image node titled '千里眼'
         for node in ar.json()['children']:
-            if '千里眼' in node['alt'] and node['type'] == 'ImageNode': break
+            if node['type'] == 'ImageNode' and '千里眼' in node['alt']: break
         else: return
         url = node['url']
         await bot.send(ev, await send_image(url), at_sender=True)

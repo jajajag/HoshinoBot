@@ -24,12 +24,36 @@ async def rank_sheet(bot, ev):
     elif is_tw:
         await bot.send(ev, f"\n休闲：拉满\n一档：问你家会长", at_sender=True)
     elif is_cn:
-        await bot.send(ev, f"https://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv?tab=jdyikm", at_sender=True)
+        await bot.send(
+                ev, f"\nhttps://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv?tab=jdyikm",
+                at_sender=True)
+
+
+@sv.on_rex(r'^(\*?([日台国陆b])服?)?作业$')
+async def rank_sheet(bot, ev):
+    match = ev['match']
+    is_jp = match.group(2) == '日'
+    is_tw = match.group(2) == '台'
+    is_cn = match.group(2) and match.group(2) in '国陆b'
+    if not is_jp and not is_tw and not is_cn:
+        await bot.send(ev, '\n请问您要查询哪个服务器的作业？'\
+                '\n(日|台|国|陆|b)作业', at_sender=True)
+        return
+    if is_jp:
+        await bot.send(ev, f"\nhttps://www.aikurumi.cn/gvg;serverType=jp",
+                       at_sender=True)
+    elif is_tw:
+        await bot.send(ev, f"\nhttps://www.aikurumi.cn/gvg;serverType=tw",
+                       at_sender=True)
+    elif is_cn:
+        await bot.send(ev, f"\nhttps://www.caimogu.cc/gzlj", at_sender=True)
 
 
 @sv.on_fullmatch('刷图')
 async def farm_sheet(bot, ev):
-    await bot.send(ev, f"https://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv?tab=r0h0ei", at_sender=True)
+    await bot.send(
+            ev, f"\nhttps://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv?tab=r0h0ei",
+            at_sender=True)
 
 
 @sv.on_fullmatch('jjc', 'JJC', 'JJC作业', 'JJC作业网', 'JJC数据库', 'jjc作业', 'jjc作业网', 'jjc数据库')

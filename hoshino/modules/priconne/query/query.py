@@ -1,47 +1,37 @@
 import asyncio
+import httpx
+import os
 import itertools
+from bilibili_api import user, sync
 from datetime import datetime
 from hoshino import util, R
 from hoshino.typing import CQEvent
 from . import sv
 
-rank_cn = '18-5'
-pcn = R.img(f'priconne/quick/r{rank_cn}-cn-0.png').cqcode
 
-
-def get_support_rank(t: datetime, server):
-    if server == 'jp':
-        delta = t - datetime(2021, 8, 15)
-    elif server == 'tw':
-        delta = t - datetime(2021, 12, 15)
-    else:
-        raise ValueError('Unknown server')
-    years, days = divmod(delta.days, 365)
-    rank = 21 + (years * 12 + days // 30) // 3
-    return rank
-
-
-#@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
+@sv.on_rex(r'^(\*?([日台国陆b])服?([前中后]*)卫?)?rank(表|推荐|指南)?$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'
     is_tw = match.group(2) == '台'
     is_cn = match.group(2) and match.group(2) in '国陆b'
     if not is_jp and not is_tw and not is_cn:
-        await bot.send(ev, '\n请问您要查询哪个服务器的rank表？\n*日rank表\n*台rank表\n*陆rank表', at_sender=True)
+        await bot.send(ev, '\n请问您要查询哪个服务器的rank表？'\
+                '\n*日rank表\n*台rank表\n*陆rank表', at_sender=True)
         return
-    msg = [
-        '\n※rank表仅供参考，升r有风险，强化需谨慎\n※请以会长要求为准',
-    ]
     if is_jp:
-        await bot.send(ev, f"\n休闲：输出拉满 辅助R{get_support_rank(datetime.now(), 'jp')}-0\n一档：问你家会长", at_sender=True)
+        await bot.send(ev, f"\n休闲：拉满\n一档：问你家会长", at_sender=True)
     elif is_tw:
-        await bot.send(ev, f"\n休闲：输出拉满 辅助R{get_support_rank(datetime.now(), 'tw')}-0\n一档：问你家会长", at_sender=True)
+        await bot.send(ev, f"\n休闲：拉满\n一档：问你家会长", at_sender=True)
     elif is_cn:
-        await bot.send(ev, f"https://www.bilibili.com/read/cv19044402\n{pcn}", at_sender=True)
-        # msg.append(f'※不定期搬运自nga\n※制作by樱花铁道之夜\nR{rank_cn} rank表：\n{pcn}')
-        # await bot.send(ev, '\n'.join(msg), at_sender=True)
-        # await util.silence(ev, 60)
+        await bot.send(ev, f"https://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv' \
+                '?tab=jdyikm", at_sender=True)
+
+
+@sv.on_fullmatch('刷图')
+async def farm_sheet(bot, ev):
+    await bot.send(ev, f"https://docs.qq.com/sheet/DYWxDbGdRYWV1bHFv' \
+                '?tab=r0h0ei", at_sender=True)
 
 
 @sv.on_fullmatch('jjc', 'JJC', 'JJC作业', 'JJC作业网', 'JJC数据库', 'jjc作业', 'jjc作业网', 'jjc数据库')
@@ -117,15 +107,55 @@ async def dragon(bot, ev):
     await util.silence(ev, 60)
 
 
-#@sv.on_fullmatch('千里眼')
-async def future_gacha(bot, ev):
-    await bot.send(ev, "亿里眼·一之章 nga.178.com/read.php?tid=21317816\n亿里眼·二之章 nga.178.com/read.php?tid=25358671")
-    await util.silence(ev, 60)
+# Borrowed from https://github.com/azmiao/uma_plugin
+async def download_image(img_path, url):
+    response = httpx.get(url, timeout=10)
+    with open(img_path, 'wb') as f:
+        f.write(response.read())
 
-# 申请装备了捏
-@sv.on_fullmatch('申请了捏')
-async def apply_equip(bot, ev):
-    await bot.send(ev, "好的捏")
-    # Sleep for 8 hours
-    await asyncio.sleep(8 * 60 * 60)
-    await bot.send(ev, "申请装备了捏", at_sender=True)
+
+async def send_image(url):
+    file_name = url.split('/')[-1]
+    img_path = os.path.join(R.img('priconne').path, 'quick/{file_name}')
+    if not os.path.exists(img_path):
+        download_image(img_path, url)
+    return R.img('priconne/quick/{file_name}').cqcode
+
+
+@sv.on_rex(r'^(\*?([台国陆b])服?千里眼$')
+async def future_gacha_bili(bot, ev):
+    match = ev['match']
+    is_tw = match.group(2) == '台'
+    is_cn = match.group(2) and match.group(2) in '国陆b'
+    if not is_tw and not is_cn:
+        await bot.send(ev, '\n请问您要查询哪个服务器的千里眼？'\
+                '\n(台|国|陆|b)千里眼', at_sender=True)
+        return
+    # 源自UP主镜华妈妈我要喝捏捏：https://space.bilibili.com/1343686
+    if is_tw:
+        u = user.User(1343686)
+        articles = await u.get_articles()
+        # Find article titled '千里眼' from most recent to oldest
+        for article in articles['articles']:
+            if '千里眼' in article['title']: break
+        else: return
+        # Fetch article content
+        ar = article.Article(article['id'])
+        await ar.fetch_content()
+        # Find image node titled '千里眼'
+        for node in ar.json()['children']:
+            if '千里眼' in node['alt'] and node['type'] == 'ImageNode': break
+        else: return
+        url = node['url']
+        await bot.send(ev, await send_image(url), at_sender=True)
+    # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
+    elif is_cn:
+        ar = article.Article(15264705)
+        await ar.fetch_content()
+        # Find first image node
+        for node in ar.json()['children']:
+            if node['type'] == 'ImageNode': break
+        else: return
+        url = node['url']
+        await bot.send(ev, await send_image(url), at_sender=True)
+

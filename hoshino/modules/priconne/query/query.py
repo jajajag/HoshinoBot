@@ -140,7 +140,7 @@ async def send_image(url):
     file_name = url.split('/')[-1]
     img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
     if not os.path.exists(img_path):
-        download_image(img_path, url)
+        await download_image(img_path, url)
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 

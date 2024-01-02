@@ -139,7 +139,9 @@ async def download_image(img_path, url):
 async def send_image(url):
     file_name = url.split('/')[-1]
     img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
+    logger.info(f'开始查看千里眼是否存在！！！！！！')
     if not os.path.exists(img_path):
+        logger.info(f'千里眼不存在？？？？？？？？？？')
         await download_image(img_path, url)
     return R.img(f'priconne/quick/{file_name}').cqcode
 
@@ -147,7 +149,6 @@ async def send_image(url):
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
 async def future_gacha_bili(bot, ev):
     match = ev['match']
-    print(match.group(2))
     is_tw = match.group(2) == '台'
     is_cn = match.group(2) and match.group(2) in '国陆b'
     if not is_tw and not is_cn:

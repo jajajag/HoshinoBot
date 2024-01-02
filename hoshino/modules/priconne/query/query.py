@@ -4,7 +4,7 @@ import os
 import itertools
 from bilibili_api import article, user
 from datetime import datetime
-from hoshino import util, R
+from hoshino import util, R, logger
 from hoshino.typing import CQEvent
 from . import sv
 

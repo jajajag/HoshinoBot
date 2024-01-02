@@ -4,7 +4,7 @@ import os
 import itertools
 from bilibili_api import article, user
 from datetime import datetime
-from hoshino import util, R, logger
+from hoshino import util, R
 from hoshino.typing import CQEvent
 from . import sv
 
@@ -139,9 +139,7 @@ async def download_image(img_path, url):
 async def send_image(url):
     file_name = url.split('/')[-1]
     img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
-    logger.info(f'开始查看千里眼是否存在！！！！！！')
     if not os.path.exists(img_path):
-        logger.info(f'千里眼不存在？？？？？？？？？？')
         await download_image(img_path, url)
     return R.img(f'priconne/quick/{file_name}').cqcode
 

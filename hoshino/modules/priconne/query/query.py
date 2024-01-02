@@ -123,7 +123,7 @@ async def send_image(url):
 @sv.on_rex(r'^(\*?([台国陆b])服?千里眼$')
 async def future_gacha_bili(bot, ev):
     match = ev['match']
-    print(match.group(2)
+    print(match.group(2))
     is_tw = match.group(2) == '台'
     is_cn = match.group(2) and match.group(2) in '国陆b'
     if not is_tw and not is_cn:

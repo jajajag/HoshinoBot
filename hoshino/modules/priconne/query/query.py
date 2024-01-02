@@ -120,7 +120,7 @@ async def send_image(url):
     return R.img('priconne/quick/{file_name}').cqcode
 
 
-@sv.on_rex(r'^(\*?([台国陆b])服?千里眼$')
+@sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
 async def future_gacha_bili(bot, ev):
     match = ev['match']
     print(match.group(2))

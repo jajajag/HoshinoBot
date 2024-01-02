@@ -2,7 +2,7 @@ import asyncio
 import httpx
 import os
 import itertools
-from bilibili_api import user, sync
+from bilibili_api import article, user
 from datetime import datetime
 from hoshino import util, R
 from hoshino.typing import CQEvent
@@ -159,11 +159,11 @@ async def future_gacha_bili(bot, ev):
         u = user.User(1343686)
         articles = await u.get_articles()
         # Find article titled '千里眼' from most recent to oldest
-        for article in articles['articles']:
-            if '千里眼' in article['title']: break
+        for ar in articles['articles']:
+            if '千里眼' in ar['title']: break
         else: return
         # Fetch article content
-        ar = article.Article(article['id'])
+        ar = article.Article(ar['id'])
         await ar.fetch_content()
         # Find image node titled '千里眼'
         for node in ar.json()['children']:

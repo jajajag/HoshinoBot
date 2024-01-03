@@ -153,5 +153,5 @@ async def update_seeker():
 
     # 推送至各个订阅群
     pic = R.img('priconne/comic', get_pic_name(episode)).cqcode
-    msg = f'\n第{episode}话\n{pic}'
+    msg = f'第{episode}话\n{pic}'
     await sv.broadcast(msg, 'PCR官方四格', 0.5)

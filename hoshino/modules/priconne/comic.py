@@ -110,7 +110,7 @@ async def update_seeker():
     # 获取最新漫画信息
     # From 是年年嗷嗷嗷(https://space.bilibili.com/3260075/dynamic)
     u = user.User(3260075)
-    res = sync(u.get_dynamics())
+    res = await u.get_dynamics()
     link = None
     # Check the newest few dynamics
     for card in res['cards']:

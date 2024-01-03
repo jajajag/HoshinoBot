@@ -78,7 +78,7 @@ def update_pool_fromdb():
             # Find current gacha pool
             if start_time <= current_time <= end_time:
                 # Ad unit_id to gacha_bonus_ids if it is up
-                if gacha_bonus_id < 0:
+                if gacha_bonus_id > 0:
                     gacha_bonus_ids.append(unit_id)
                 else:
                     unit_ids.append(unit_id)

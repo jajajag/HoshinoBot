@@ -13,6 +13,7 @@ A QQ-bot for Princess Connect Re:Dive based on [Nonebot](https://github.com/none
 加入了一些自用的features：
 * 自动拉取[卡池信息](https://redive.estertion.win/db/)
 * 自动拉取[国千里眼](https://www.bilibili.com/read/cv15264705)和[台千里眼](https://space.bilibili.com/1343686/article)
+* 自动拉取[汉化漫画](https://space.bilibili.com/3260075/dynamic)
 * 关闭某些默认开启的service
 * 加入某些角色的别名
 

@@ -142,7 +142,7 @@ async def update_seeker():
             return
 
     # 确定已有更新，下载图片
-    sv.logger.info(f'发现更新 id={id_}')
+    sv.logger.info(f'发现更新 episode={episode}')
     save_dir = R.img('priconne/comic/').path
     await download_img(os.path.join(save_dir, get_pic_name(episode)), link)
 

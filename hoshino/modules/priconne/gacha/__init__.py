@@ -200,7 +200,7 @@ async def gacha_tenjou(bot, ev: CQEvent):
         msg.append("这位酋长，梦幻包考虑一下？")
     elif up == 0:
         msg.append("据说天井的概率只有" + gacha.tenjou_rate)
-    elif up <= 2:
+    elif up == 1:
         if result['first_up_pos'] < 50:
             msg.append("你的喜悦我收到了，滚去喂鲨鱼吧！")
         elif result['first_up_pos'] < 100:
@@ -211,9 +211,10 @@ async def gacha_tenjou(bot, ev: CQEvent):
             msg.append("补井还是不补井，这是一个问题...")
         else:
             msg.append("期望之内，亚洲水平")
-    elif up == 3:
-        msg.append("抽井母五一气呵成！多出30等专武～")
-    elif up >= 4:
+    elif up == 2:
+        #msg.append("抽井母五一气呵成！多出30等专武～")
+        msg.append("抽井母五一气呵成！")
+    elif up >= 3:
         msg.append("记忆碎片一大堆！您是托吧？")
 
     await bot.send(ev, '\n'.join(msg), at_sender=True)

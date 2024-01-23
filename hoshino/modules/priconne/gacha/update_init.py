@@ -7,6 +7,7 @@ from datetime import datetime
 
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
+jp_url = 'https://wthee.xyz/db/redive_jp.db'
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
 db_name = 'master_{}.db'
 db_path = os.path.join(os.path.dirname(__file__), db_name)
@@ -24,7 +25,11 @@ def check_version():
     for pool in POOL:
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
-            response = requests.get(base_url + db_name.format(pool.lower()))
+            # Use non-hash version of jp database
+            if pool == 'jp':
+                response = requests.get(jp_url)
+            else:
+                response = requests.get(base_url + db_name.format(pool.lower()))
             # Download new database if download is successful
             if response.status_code == 200:
                 with open(db_path.format(pool.lower()), 'wb') as fp:

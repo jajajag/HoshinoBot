@@ -26,7 +26,7 @@ def check_version():
         # Check version, download new database if new db is available
         if data[pool]['version'] != config[pool]['version']:
             # Use non-hash version of jp database
-            if pool == 'jp':
+            if pool == 'JP':
                 response = requests.get(jp_url)
             else:
                 response = requests.get(base_url + db_name.format(pool.lower()))

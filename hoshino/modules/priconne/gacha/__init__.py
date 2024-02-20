@@ -240,7 +240,13 @@ async def kakin(bot, ev: CQEvent):
 loop = asyncio.get_event_loop()
 loop.run_until_complete(update())
 
-# Update the config file at 5am or via command
-sucmd('pull-gacha-config', force_private=False,
-        aliases=('更新卡池', '强制更新卡池'))(update)
-sv.scheduled_job('cron', hour=5, jitter=300)(update)
+# Update the config file via command
+@sucmd('pull-gacha-config', force_private=False, aliases=('更新卡池', '强制更新卡池'))
+async def manual_update(sess: CommandSession = None):
+    update_pool_fromdb()
+
+# Update the config file at 5am
+@sv.scheduled_job('cron', hour=5, jitter=300)(update)
+async def auto_update(sess: CommandSession = None):
+    check_version()
+    update_pool_fromdb()

@@ -4,7 +4,6 @@ import os
 import requests
 import sqlite3
 from datetime import datetime
-from hoshino.typing import CommandSession
 
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
@@ -100,7 +99,3 @@ def update_pool_fromdb():
         conn.close()
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
-
-async def update(sess: CommandSession = None):
-    check_version()
-    update_pool_fromdb()

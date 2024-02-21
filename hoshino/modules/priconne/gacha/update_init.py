@@ -41,7 +41,7 @@ def update_db(force=False):
                 with open(db_path.format(pool), 'wb') as fp:
                     fp.write(response.content)
                 # Update version in config
-                config[pool]['version'] = data[pool]['version']
+                config[pool]['version'] = data[pool]
             else:
                 hoshino.logger.warning(f'Failed to download {pool} database')
     with open(config_path, 'w') as fp:

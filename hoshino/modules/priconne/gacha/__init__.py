@@ -246,7 +246,7 @@ async def manual_update(sess: CommandSession = None):
 
 
 # Update the config file at 5am
-@sv.scheduled_job('cron', hour=5, jitter=300)(update)
+@sv.scheduled_job('cron', hour=5, jitter=300)
 async def auto_update(sess: CommandSession = None):
     update_db(force=False)
     update_config()

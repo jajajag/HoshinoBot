@@ -6,11 +6,13 @@ import sqlite3
 from datetime import datetime
 from bs4 import BeautifulSoup
 
+
 POOL = ('CN', 'JP', 'TW')
 base_url = 'https://wthee.xyz/db/'
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
 db_name = 'redive_{}.db'
 db_path = os.path.join(os.path.dirname(__file__), db_name)
+
 
 def update_db(force=False):
     with open(config_path, 'r') as fp:
@@ -44,6 +46,7 @@ def update_db(force=False):
                 hoshino.logger.warning(f'Failed to download {pool} database')
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
+
 
 def update_config():
     with open(config_path, 'r') as fp:

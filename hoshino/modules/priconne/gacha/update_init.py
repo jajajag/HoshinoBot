@@ -84,8 +84,13 @@ def update_config():
         for row in rows:
             start_time, end_time, unit_id, gacha_bonus_id = row
             unit_id = int(unit_id / 100)
-            start_time = datetime.strptime(start_time, '%Y/%m/%d %H:%M:%S')
-            end_time = datetime.strptime(end_time, '%Y/%m/%d %H:%M:%S')
+            # Handle special case where time is not in datetime format
+            start_time = datetime.strptime(start_time, '%Y/%m/%d %H:%M:%S') \
+                    if len(start_time) > 10 \
+                    else datetime.strptime(start_time, '%Y/%m/%d')
+            end_time = datetime.strptime(end_time, '%Y/%m/%d %H:%M:%S') \
+                    if len(end_time) > 10 \
+                    else datetime.strptime(end_time, '%Y/%m/%d')
             current_time = datetime.now()
             # Find current gacha pool
             if start_time <= current_time <= end_time:

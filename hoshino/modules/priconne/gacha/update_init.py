@@ -4,35 +4,39 @@ import os
 import requests
 import sqlite3
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 POOL = ('CN', 'JP', 'TW')
-base_url = 'https://raw.githubusercontent.com/Expugn/priconne-database/master/'
-jp_url = 'https://wthee.xyz/db/redive_jp.db'
+base_url = 'https://wthee.xyz/db/'
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-db_name = 'master_{}.db'
+db_name = 'redive_{}.db'
 db_path = os.path.join(os.path.dirname(__file__), db_name)
 
-def check_version():
+def update_db(force=False):
     with open(config_path, 'r') as fp:
         config = json.load(fp)
-    # Download version.json
-    response = requests.get(base_url + 'version.json')
-    data = response.json()
+    # Fetch version info
+    response = requests.get(base_url)
     # Check if download is successful
     if response.status_code != 200:
-        hoshino.logger.warning('Failed to download version.json')
+        hoshino.logger.warning('Failed to download database version info')
         return
-    for pool in POOL:
-        # Check version, download new database if new db is available
-        if data[pool]['version'] != config[pool]['version']:
-            # Use non-hash version of jp database
-            if pool == 'JP':
-                response = requests.get(jp_url)
-            else:
-                response = requests.get(base_url + db_name.format(pool.lower()))
+    soup = BeautifulSoup(response.text, 'html.parser')
+    # Split text into lines
+    lines = soup.find('pre').get_text().splitlines()
+    data = {}
+    # Go through each line that starts with redive_{pool}.db
+    for line in lines:
+        for pool in POOL:
+            if db_name.format(pool.lower()) == line.split()[0]:
+                data[pool] = ' '.join(line.split()[1:3])
+    for pool in data:
+        # Check if force is True or version is different
+        if force or data[pool] != config[pool]['version']:
+            response = requests.get(base_url + db_name.format(pool.lower()))
             # Download new database if download is successful
             if response.status_code == 200:
-                with open(db_path.format(pool.lower()), 'wb') as fp:
+                with open(db_path.format(pool), 'wb') as fp:
                     fp.write(response.content)
                 # Update version in config
                 config[pool]['version'] = data[pool]['version']
@@ -41,12 +45,12 @@ def check_version():
     with open(config_path, 'w') as fp:
         json.dump(config, fp)
 
-def update_pool_fromdb():
+def update_config():
     with open(config_path, 'r') as fp:
         config = json.load(fp)
     for pool in POOL:
         # 1. Read all unit data from unit_data table
-        conn = sqlite3.connect(db_path.format(pool.lower()))
+        conn = sqlite3.connect(db_path.format(pool))
         cursor = conn.cursor()
         cursor.execute(('SELECT cutin_1, rarity, is_limited, move_speed'
                         ' FROM unit_data'))

@@ -106,8 +106,6 @@ async def update_seeker():
     轮询官方四格漫画更新
     若有更新则推送至订阅群
     '''
-    index = load_index()
-
     # 获取最新漫画信息
     # From 是年年嗷嗷嗷(https://space.bilibili.com/3260075/dynamic)
     u = user.User(3260075)
@@ -133,14 +131,16 @@ async def update_seeker():
     else: return
 
     # 检查是否已在目录中
+    index = load_index()
     # 同一episode可能会被更新为另一张图片（官方修正），此时episode不变而id改变
     # 所以需要两步判断
     if episode in index:
-        old_link = index[episode]
+        return
+        #old_link = index[episode]
         # Check if link has changed
-        if link == old_link:
-            sv.logger.info('未检测到官漫更新')
-            return
+        #if link == old_link:
+        #    sv.logger.info('未检测到官漫更新')
+        #    return
 
     # 确定已有更新，下载图片
     sv.logger.info(f'发现更新 episode={episode}')

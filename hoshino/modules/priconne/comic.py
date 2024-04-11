@@ -123,7 +123,9 @@ async def update_seeker():
     # Check the newest few dynamics
     for item in res['items']:
         # Continue if the dynamic is not an opus
-        if item['modules']['module_dynamic']['major'] is None: continue
+        if item['modules']['module_dynamic']['major'] is None \
+                or 'opus' not in item['modules']['module_dynamic']['major']:
+            continue
         opus = item['modules']['module_dynamic']['major']['opus']
         # Continue if the dynamic is not a comic update
         if '四格漫画更新' not in opus['summary']['text']: continue

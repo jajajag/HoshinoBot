@@ -161,10 +161,12 @@ async def future_gacha_bili(bot, ev):
         ar = article.Article(ar['id'])
         await ar.fetch_content()
         # Find image node titled '千里眼'
-        for node in ar.json()['children']:
-            if node['type'] == 'ImageNode' and '千里眼' in node['alt']: break
-        else: return
-        url = node['url']
+        #for node in ar.json()['children']:
+        #    if node['type'] == 'ImageNode' and '千里眼' in node['alt']: break
+        #else: return
+        #url = node['url']
+        # Currently use the third figure in the article
+        url = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode'][2]
         await bot.send(ev, await send_image(url), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:

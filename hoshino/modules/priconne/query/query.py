@@ -139,8 +139,22 @@ async def send_image(url):
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 
+async def send_image_tw(urls, height_limit):
+    for url in urls:
+        file_name = url.split('/')[-1]
+        img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
+        if not os.path.exists(img_path):
+            await download_image(img_path, url)
+        # JAG: Check image height to decide the real future gacha
+        img = R.img(f'priconne/quick/{file_name}').open()
+        width, height = img.size
+        # Return the first satisfied image
+        if height > height_limit:
+            return R.img(f'priconne/quick/{file_name}').cqcode
+
+
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
-async def future_gacha_bili(bot, ev):
+async def future_gacha(bot, ev):
     match = ev['match']
     is_tw = match.group(2) == '台'
     is_cn = match.group(2) and match.group(2) in '国陆b'
@@ -160,14 +174,8 @@ async def future_gacha_bili(bot, ev):
         # Fetch article content
         ar = article.Article(ar['id'])
         await ar.fetch_content()
-        # Find image node titled '千里眼'
-        #for node in ar.json()['children']:
-        #    if node['type'] == 'ImageNode' and '千里眼' in node['alt']: break
-        #else: return
-        #url = node['url']
-        # Currently use the third figure in the article
-        url = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode'][2]
-        await bot.send(ev, await send_image(url), at_sender=True)
+        urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
+        await bot.send(ev, await send_image_tw(urls, 3200), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         ar = article.Article(15264705)
@@ -178,4 +186,3 @@ async def future_gacha_bili(bot, ev):
         else: return
         url = node['url']
         await bot.send(ev, await send_image(url), at_sender=True)
-

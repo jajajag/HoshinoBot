@@ -139,17 +139,17 @@ async def send_image(url):
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 
-async def send_image_tw(urls, height_limit):
+async def send_image_tw(urls, limit):
     for url in urls:
         file_name = url.split('/')[-1]
         img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
         if not os.path.exists(img_path):
             await download_image(img_path, url)
-        # JAG: Check image height to decide the real future gacha
+        # JAG: Check image width and height to decide the real future gacha
         img = R.img(f'priconne/quick/{file_name}').open()
         width, height = img.size
         # Return the first satisfied image
-        if height > height_limit:
+        if width > limit[0] and height > limit[1]:
             return R.img(f'priconne/quick/{file_name}').cqcode
 
 
@@ -174,8 +174,12 @@ async def future_gacha(bot, ev):
         # Fetch article content
         ar = article.Article(ar['id'])
         await ar.fetch_content()
+        # Urls for all the image nodes
         urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
-        await bot.send(ev, await send_image_tw(urls, 3200), at_sender=True)
+        # Check for the required images
+        limits = [(2000, 4000), (4000, 2000)]
+        images = ''.join([await send_image_tw(urls, limit) for limit in limits])
+        await bot.send(ev, images, at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         ar = article.Article(15264705)

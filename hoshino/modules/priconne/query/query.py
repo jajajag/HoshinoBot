@@ -136,7 +136,7 @@ async def send_image(url):
     img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
     if not os.path.exists(img_path):
         await download_image(img_path, url)
-    return R.img(f'priconne/quick/{file_name}').cqcode
+    return str(R.img(f'priconne/quick/{file_name}').cqcode)
 
 
 async def send_image_tw(urls, limit):
@@ -176,9 +176,9 @@ async def future_gacha(bot, ev):
         await ar.fetch_content()
         # Urls for all the image nodes
         urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
-        # Check for the required images
+        # Check for the required images (千里眼/二专表)
         limits = [(2000, 4000), (4000, 2000)]
-        images = ''.join([await str(send_image_tw(urls, limit)) for limit in limits])
+        images = ''.join([await send_image_tw(urls, limit) for limit in limits])
         await bot.send(ev, images, at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:

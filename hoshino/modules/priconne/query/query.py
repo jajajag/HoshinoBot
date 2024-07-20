@@ -178,7 +178,7 @@ async def future_gacha(bot, ev):
         urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
         # Check for the required images
         limits = [(2000, 4000), (4000, 2000)]
-        images = ''.join([await send_image_tw(urls, limit) for limit in limits])
+        images = ''.join([await str(send_image_tw(urls, limit)) for limit in limits])
         await bot.send(ev, images, at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:

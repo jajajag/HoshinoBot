@@ -136,7 +136,7 @@ async def send_image(url):
     img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
     if not os.path.exists(img_path):
         await download_image(img_path, url)
-    return str(R.img(f'priconne/quick/{file_name}').cqcode)
+    return R.img(f'priconne/quick/{file_name}').cqcode
 
 
 async def send_image_tw(urls, limit):
@@ -150,7 +150,7 @@ async def send_image_tw(urls, limit):
         width, height = img.size
         # Return the first satisfied image
         if width > limit[0] and height > limit[1]:
-            return R.img(f'priconne/quick/{file_name}').cqcode
+            return str(R.img(f'priconne/quick/{file_name}').cqcode)
 
 
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')

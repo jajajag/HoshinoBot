@@ -170,7 +170,7 @@ async def future_gacha(bot, ev):
     # 源自UP主Kumiko_kawaii：https://space.bilibili.com/511146986
     if is_tw:
         # Limits for the required images (千里眼/二专表)
-        limits = [(2000, 4000), (4000, 2000)]
+        limits = [(1600, 4000), (1600, 600)]
         u = user.User(511146986)
         articles = await u.get_articles()
         # Find article titled '千里眼' from most recent to oldest

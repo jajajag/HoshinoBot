@@ -3,6 +3,7 @@ import re
 import random
 import asyncio
 from bilibili_api import user, Credential
+from hoshino import config
 from urllib.parse import urljoin, urlparse, parse_qs
 try:
     import ujson as json
@@ -109,11 +110,9 @@ async def update_seeker():
     # 检查是否已在目录中
     index = load_index()
 
-    # JAG: Cookies are manually obtained from the browser (stored in index.json)
+    # JAG: Cookies are manually obtained from the browser
     # https://nemo2011.github.io/bilibili-api/#/get-credential
-    cookies = ['sessdata', 'bili_jct', 'buvid3', 'dedeuserid', 'ac_time_value']
-    kwargs = {key: index[key] for key in cookies if key in index}
-    credential = Credential(**kwargs)
+    credential = Credential(**config.priconne.bili_cookies)
 
     # JAG: Fetch the comic from the user's dynamics
     # From 是年年嗷嗷嗷(https://space.bilibili.com/3260075/dynamic)

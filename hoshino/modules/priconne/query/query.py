@@ -4,7 +4,7 @@ import os
 import itertools
 from bilibili_api import article, user
 from datetime import datetime
-from hoshino import util, R
+from hoshino import config, util, R
 from hoshino.typing import CQEvent
 from . import sv
 
@@ -166,10 +166,14 @@ async def future_gacha(bot, ev):
         await bot.send(ev, '\n请问您要查询哪个服务器的千里眼？'\
                 '\n(台|国|陆|b)千里眼', at_sender=True)
         return
+
     # 源自UP主镜华妈妈我要喝捏捏：https://space.bilibili.com/1343686（已弃坑）
     # 源自UP主Kumiko_kawaii：https://space.bilibili.com/511146986
     if is_tw:
-        u = user.User(511146986)
+        # JAG: Cookies are manually obtained from the browser
+        # https://nemo2011.github.io/bilibili-api/#/get-credential
+        credential = Credential(**config.priconne.bili_cookies)
+        u = user.User(511146986, credential=credential)
         articles = await u.get_articles()
         # Find article titled '千里眼' from most recent to oldest
         for ar in articles['articles']:

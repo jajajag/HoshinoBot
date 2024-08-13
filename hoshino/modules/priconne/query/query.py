@@ -2,7 +2,7 @@ import asyncio
 import httpx
 import os
 import itertools
-from bilibili_api import article, user
+from bilibili_api import article, user, Credential
 from datetime import datetime
 from hoshino import config, util, R
 from hoshino.typing import CQEvent

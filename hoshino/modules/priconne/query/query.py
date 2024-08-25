@@ -43,7 +43,7 @@ async def rank_sheet(bot, ev):
         await bot.send(ev, f"\nhttps://www.aikurumi.cn/gvg;serverType=jp",
                        at_sender=True)
     elif is_tw:
-        await bot.send(ev, f"\nhttps://www.aikurumi.cn/gvg;serverType=tw",
+        await bot.send(ev, f"\nhttps://docs.qq.com/sheet/DVmdwZkxJdGR1dU1p",
                        at_sender=True)
     elif is_cn:
         await bot.send(ev, f"\nhttps://www.caimogu.cc/gzlj", at_sender=True)

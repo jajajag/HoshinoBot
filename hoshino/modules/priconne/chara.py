@@ -31,12 +31,13 @@ def add_extra_alias(_pcr_data):
     # JAG: Append alias to _pcr_data
     for key in _pcr_data_extra.CHARA_NAME:
         # Add extra chara name to _pcr_data.CHARA_NAME
-        if key in _pcr_data.CHARA_NAME:
-            for alias in _pcr_data_extra.CHARA_NAME[key]:
-                if alias not in _pcr_data.CHARA_NAME[key]:
-                    _pcr_data.CHARA_NAME[key].append(alias)
-        else:
-            _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
+        #if key in _pcr_data.CHARA_NAME:
+        #    for alias in _pcr_data_extra.CHARA_NAME[key]:
+        #        if alias not in _pcr_data.CHARA_NAME[key]:
+        #            _pcr_data.CHARA_NAME[key].append(alias)
+        #else:
+        #    _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
+        _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
         # Remove extra chara name from _pcr_data.UnavailableChara
         if key in _pcr_data.UnavailableChara:
             _pcr_data.UnavailableChara.remove(key)

@@ -31,12 +31,6 @@ def add_extra_alias(_pcr_data):
     # JAG: Append alias to _pcr_data
     for key in _pcr_data_extra.CHARA_NAME:
         # Add extra chara name to _pcr_data.CHARA_NAME
-        #if key in _pcr_data.CHARA_NAME:
-        #    for alias in _pcr_data_extra.CHARA_NAME[key]:
-        #        if alias not in _pcr_data.CHARA_NAME[key]:
-        #            _pcr_data.CHARA_NAME[key].append(alias)
-        #else:
-        #    _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
         _pcr_data.CHARA_NAME[key] = _pcr_data_extra.CHARA_NAME[key]
         # Remove extra chara name from _pcr_data.UnavailableChara
         if key in _pcr_data.UnavailableChara:
@@ -157,6 +151,10 @@ class Chara:
     @property
     def name(self):
         return _pcr_data.CHARA_NAME[self.id][0] if self.id in _pcr_data.CHARA_NAME else _pcr_data.CHARA_NAME[UNKNOWN][0]
+
+    @property
+    def clan(self):
+        return _pcr_data.CHARA_PROFILE[self.id]['公会'] if self.id in _pcr_data.CHARA_PROFILE else '？？？'
 
     @property
     def is_npc(self) -> bool:

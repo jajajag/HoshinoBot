@@ -151,8 +151,8 @@ class DailyNumberLimiter:
 
     def check(self, key) -> bool:
         now = datetime.now(self.tz)
-        %day = (now - timedelta(hours=5)).day
-        % Using real time instead of Landosol time
+        #day = (now - timedelta(hours=5)).day
+        # Using real time instead of Landosol time
         day = now.day
         if day != self.today:
             self.today = day

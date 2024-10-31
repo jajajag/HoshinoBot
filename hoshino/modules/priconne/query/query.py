@@ -182,6 +182,7 @@ async def future_gacha(bot, ev):
         # Fetch article content
         ar = article.Article(ar['id'])
         await ar.fetch_content()
+        # This line works for bilibili-api-python==16.2.0
         urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
         await bot.send(ev, await send_image_tw(urls, 3200), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360

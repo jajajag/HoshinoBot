@@ -1,5 +1,6 @@
 import asyncio
 import httpx
+import json
 import os
 import itertools
 from bilibili_api import article, user, Credential
@@ -139,7 +140,7 @@ async def send_image(url):
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 
-async def send_image_tw(urls, height_limit):
+async def send_image_tw_162(urls, height_limit):
     found = False
     for url in urls:
         file_name = url.split('/')[-1]
@@ -155,6 +156,20 @@ async def send_image_tw(urls, height_limit):
         elif height > height_limit:
             found = True
             first_cqcode = R.img(f'priconne/quick/{file_name}').cqcode 
+
+
+async def send_image_tw_163(nodes, height_limit):
+    for i in range(len(nodes)):
+        if nodes[i]['height'] > height_limit:
+            cqcode = ''
+            for j in range(i, min(i + 2, len(nodes))):
+                file_name = nodes[j]['url'].split('/')[-1]
+                img_path = os.path.join(R.img('priconne').path, 
+                                        f'quick/{file_name}')
+                if not os.path.exists(img_path):
+                    await download_image(img_path, nodes[j]['url'])
+                cqcode += R.img(f'priconne/quick/{file_name}').cqcode
+            return cqcode
 
 
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
@@ -179,12 +194,22 @@ async def future_gacha(bot, ev):
         for ar in articles['articles']:
             if '千里眼' in ar['title']: break
         else: return
+        # Sleep for 1 second
+        await asyncio.sleep(1)
         # Fetch article content
         ar = article.Article(ar['id'])
+        # Sleep for 1 second
+        await asyncio.sleep(1)
         await ar.fetch_content()
-        # This line works for bilibili-api-python==16.2.0
-        urls = [node['url'] for node in ar.json()['children'] if node['type'] == 'ImageNode']
-        await bot.send(ev, await send_image_tw(urls, 3200), at_sender=True)
+        # These lines work for bilibili-api-python==16.2.0
+        #nodess = [node['url'] for node in ar.json()['children'] \
+        #        if node['type'] == 'ImageNode']
+        #await bot.send(ev, await send_image_tw_162(nodes, 3200), at_sender=True)
+        # These lines work for bilibili-api-python==16.3.0
+        ops = json.loads(ar.json()['children'][0]['text'])['ops']
+        nodes = [node['insert']['native-image'] for node in ops \
+                if 'native-image' in node['insert']]
+        await bot.send(ev, await send_image_tw_163(nodes, 3200), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         ar = article.Article(15264705)

@@ -213,6 +213,8 @@ async def future_gacha(bot, ev):
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         ar = article.Article(15264705)
+        # Sleep for 1 second
+        await asyncio.sleep(1)
         await ar.fetch_content()
         # Find first image node
         for node in ar.json()['children']:

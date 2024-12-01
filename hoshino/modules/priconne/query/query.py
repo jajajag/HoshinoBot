@@ -140,7 +140,7 @@ async def send_image(url):
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 
-async def send_image_tw_162(urls, height_limit):
+async def send_image_tw_node(urls, height_limit):
     found = False
     for url in urls:
         file_name = url.split('/')[-1]
@@ -158,7 +158,7 @@ async def send_image_tw_162(urls, height_limit):
             first_cqcode = R.img(f'priconne/quick/{file_name}').cqcode 
 
 
-async def send_image_tw_163(nodes, height_limit):
+async def send_image_tw_ops(nodes, height_limit):
     for i in range(len(nodes)):
         if nodes[i]['height'] > height_limit:
             cqcode = ''
@@ -201,15 +201,16 @@ async def future_gacha(bot, ev):
         # Sleep for 1 second
         await asyncio.sleep(1)
         await ar.fetch_content()
-        # These lines work for bilibili-api-python==16.2.0
-        #nodess = [node['url'] for node in ar.json()['children'] \
-        #        if node['type'] == 'ImageNode']
-        #await bot.send(ev, await send_image_tw_162(nodes, 3200), at_sender=True)
-        # These lines work for bilibili-api-python==16.3.0
-        ops = json.loads(ar.json()['children'][0]['text'])['ops']
-        nodes = [node['insert']['native-image'] for node in ops \
-                if 'native-image' in node['insert']]
-        await bot.send(ev, await send_image_tw_163(nodes, 3200), at_sender=True)
+        # Check if the article is formulated as ops or not
+        if 'text' in ar.json()['children'][0]:
+            ops = json.loads(ar.json()['children'][0]['text'])['ops']
+            nodes = [node['insert']['native-image'] for node in ops \
+                     if 'native-image' in node['insert']]
+            await bot.send(ev, await send_image_tw_ops(nodes, 3200), at_sender=True)
+        else:
+            nodes = [node['url'] for node in ar.json()['children'] \
+                     if node['type'] == 'ImageNode']
+            await bot.send(ev, await send_image_tw_node(nodes, 3200), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         ar = article.Article(15264705)

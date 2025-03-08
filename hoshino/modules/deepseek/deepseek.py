@@ -1,6 +1,7 @@
 from hoshino import config, Service
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter
+from openai import OpenAI
 
 
 sv_help = '''

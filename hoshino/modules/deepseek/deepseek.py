@@ -27,8 +27,7 @@ client = OpenAI(api_key=config.priconne.deepseek.API_KEY,
 async def deepseek(bot, ev: CQEvent):
     # User info
     user_id = ev.user_id
-    cmd = ev.message.extract_plain_text()
-    content = cmd[4:]
+    content = ev.message.extract_plain_text()
 
     # Check if the user has reached the limit
     if not user_id and not deepseek_limiter.check(user_id):

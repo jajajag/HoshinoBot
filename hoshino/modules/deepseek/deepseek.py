@@ -1,3 +1,4 @@
+import asyncio
 from hoshino import config, Service
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter

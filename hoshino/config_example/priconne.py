@@ -1,6 +1,9 @@
 class arena:
     AUTH_KEY = ""
 
+class deepseek:
+    API_KEY = ""
+
 # Cookies for bilibili_api
 bili_cookies = {
     "sessdata": "",

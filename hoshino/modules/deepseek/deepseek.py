@@ -51,4 +51,4 @@ async def deepseek(bot, ev: CQEvent):
         await bot.finish(ev, '没钳了没钳了！', at_sender=True)
 
     # Get the response
-    await bot.send(ev, response.choices[0].message['content'])
+    await bot.send(ev, response.choices[0].message.content)

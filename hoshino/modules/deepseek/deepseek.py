@@ -19,7 +19,7 @@ max_output_tokens = 100
 
 
 # Initialize the deepseek client
-client = OpenAI(api_key=config.priconne.deepseek.api_key,
+client = OpenAI(api_key=config.priconne.deepseek.API_KEY,
                 base_url="https://api.deepseek.com")
 
 

@@ -1,4 +1,4 @@
-from hoshino import config
+from hoshino import config, Service
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter
 

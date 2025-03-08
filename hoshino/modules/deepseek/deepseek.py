@@ -13,9 +13,9 @@ sv = Service('deepseek', help_=sv_help, bundle='deepseek',
 
 
 # Maximum number of questions that can be asked per day
-_max_daily = 5
-deepseek_limiter = DailyNumberLimiter(2)
-max_output_tokens = 100
+_max_daily = 2
+deepseek_limiter = DailyNumberLimiter(_max_daily)
+max_output_tokens = 500
 
 
 # Initialize the deepseek client
@@ -36,9 +36,10 @@ async def deepseek(bot, ev: CQEvent):
     deepseek_limiter.increase(user_id)
 
     try:
-        response = client.chat.completions.create(
+        response = response = await asyncio.to_thread(
+            client.chat.completions.create,
             # Target model (deepseek-chat or deepseek-reasoner)
-            model="deepseek-chat",
+            model="deepseek-reasoner",
             messages=[{"role": "user", "content": content}],
             # Control the temperature of the response (0 to 1, default 0.7)
             #temperature=0.7,

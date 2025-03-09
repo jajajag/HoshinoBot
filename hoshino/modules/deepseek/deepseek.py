@@ -1,4 +1,5 @@
 import asyncio
+import re
 from hoshino import config, Service
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter
@@ -29,6 +30,10 @@ async def deepseek(bot, ev: CQEvent):
     # User info
     user_id = ev.user_id
     content = ev.message.extract_plain_text()
+
+    # Skip if the message is empty
+    if re.fullmatch(r'^[^A-Za-z\u4e00-\u9fff]*$', content):
+        return
 
     # Check if the user has reached the limit
     if not user_id and not deepseek_limiter.check(user_id):

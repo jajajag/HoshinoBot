@@ -17,7 +17,7 @@ sv = Service('deepseek', help_=sv_help, bundle='deepseek',
 # Maximum number of questions that can be asked per day
 _max_daily = 2
 deepseek_limiter = DailyNumberLimiter(_max_daily)
-max_output_tokens = 500
+max_output_tokens = 1000
 
 
 # Initialize the deepseek client

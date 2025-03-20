@@ -29,7 +29,7 @@ client = OpenAI(api_key=config.priconne.llm.API_KEY)
 async def llm(bot, ev: CQEvent):
     # User info
     user_id = ev.user_id
-    content = ev.message.extract_plain_text()
+    content = ev.message.extract_plain_text()[5:]
 
     # Skip if the message is empty
     if re.fullmatch(r'^[^A-Za-z\u4e00-\u9fff]*$', content):

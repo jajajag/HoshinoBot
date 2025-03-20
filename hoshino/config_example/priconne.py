@@ -1,7 +1,7 @@
 class arena:
     AUTH_KEY = ""
 
-class deepseek:
+class llm:
     API_KEY = ""
 
 # Cookies for bilibili_api

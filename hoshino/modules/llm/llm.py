@@ -37,7 +37,7 @@ async def llm(bot, ev: CQEvent):
 
     # Check if the user has reached the limit
     if not user_id in config.SUPERUSERS and not llm_limiter.check(user_id):
-        await bot.send(ev, f'已达到每日提问次数上限（{_max_daily}）！',
+        await bot.finish(ev, f'已达到每日提问次数上限（{_max_daily}）！',
                        at_sender=True)
     llm_limiter.increase(user_id)
 

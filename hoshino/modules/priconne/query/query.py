@@ -183,12 +183,13 @@ async def future_gacha(bot, ev):
         return
 
     # 源自UP主镜华妈妈我要喝捏捏：https://space.bilibili.com/1343686（已弃坑）
-    # 源自UP主Kumiko_kawaii：https://space.bilibili.com/511146986
+    # 源自UP主Kumiko_kawaii：https://space.bilibili.com/511146986（已弃坑）
+    # 源自UP主盛夏丶丶丶丶丶丶丶：https://space.bilibili.com/477616791
     if is_tw:
         # JAG: Cookies are manually obtained from the browser
         # https://nemo2011.github.io/bilibili-api/#/get-credential
         credential = Credential(**config.priconne.bili_cookies)
-        u = user.User(511146986, credential=credential)
+        u = user.User(477616791, credential=credential)
         articles = await u.get_articles()
         # Find article titled '千里眼' from most recent to oldest
         for ar in articles['articles']:

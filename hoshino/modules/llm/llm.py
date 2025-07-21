@@ -15,7 +15,7 @@ sv = Service('llm', help_=sv_help, bundle='llm',
 
 
 # Maximum number of questions that can be asked per day
-_max_daily = 2
+_max_daily = 10
 llm_limiter = DailyNumberLimiter(_max_daily)
 max_output_tokens = 1000
 

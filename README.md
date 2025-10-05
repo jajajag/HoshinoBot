@@ -33,6 +33,7 @@ A QQ-bot for Princess Connect Re:Dive based on [Nonebot](https://github.com/none
 
 
 ## 更新公告
+- 2025.09.30: 勝利を信じて！
 - 2025.05.08: **【喜报】** HoshinoBot现已更新[**超详细技术文档**](https://deepwiki.com/Ice9Coffee/HoshinoBot)！配有7*24h客服在线解决您的任何疑问！直达链接：https://deepwiki.com/Ice9Coffee/HoshinoBot 
 - 2023.04: 支持Twitter API v2。使用前请按照[指引](https://github.com/Ice9Coffee/HoshinoBot/pull/271#issuecomment-1505584958)升级框架。由于Twitter API政策仍在频繁调整，不保证未来的可用性。感谢贡献者[@othinus001](https://github.com/othinus001)！
 
@@ -122,6 +123,15 @@ QQ群[![试用/赞助群](https://img.shields.io/badge/试用/赞助-Hoshinoの�
 
 
 ## 部署指南
+
+2025.09.30注：
+- 由于无头QQ客户端框架非常短命，本部署指南已过时。
+- HoshinoBot仍可正常工作，请将下文中的go-cqhttp替换为您正在使用的任何支持OneBot v11协议的无头QQ客户端，相关配置请参考相应的文档。
+- 注意区分HoshinoBot侧与无头QQ客户端侧。在反向ws协议中，HoshinoBot侧为服务端，无头QQ客户端为客户端。
+- 善用搜索及deepwiki。
+
+<details>
+  <summary>旧版部署指南存档</summary>
 
 **HoshinoBot基于OneBot协议通信，使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)或[CQHTTP Mirai](https://github.com/yyuueexxiinngg/cqhttp-mirai)作为无头QQ客户端。**
 
@@ -370,7 +380,7 @@ access_token_key = "your_access_token_key",
 access_token_secret = "your_access_token_secret"
 ```
 
-
+</details>
 
 ## 友情链接
 

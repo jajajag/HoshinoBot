@@ -63,7 +63,7 @@ class SonetSpider(BaseSpider):
         soup = BeautifulSoup(await resp.text, 'lxml')
         # JAG: New web structure
         return [
-            idx=li.a["href"],
+            Item(idx=li.a["href"],
             content=f"{li.a.get_text(strip=True)}\n▲www.princessconnect.so-net.tw{li.a['href']}"
             ) for li in soup.select("article.news_con ul li")
             #Item(idx=dd.a["href"],

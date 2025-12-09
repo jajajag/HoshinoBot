@@ -62,9 +62,9 @@ class SonetSpider(BaseSpider):
     async def get_items(resp:aiorequests.AsyncResponse):
         soup = BeautifulSoup(await resp.text, 'lxml')
         return [
-            Item(idx=dd.a["href"],
-                 content=f"{dd.text}\n▲www.princessconnect.so-net.tw{dd.a['href']}"
-            ) for dd in soup.find_all("dd")
+            Item(idx=li.a["href"],
+                 content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
+            ) for li in soup.select("article.news_con ul>li")
         ]
 
 

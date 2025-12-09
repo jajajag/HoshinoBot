@@ -55,7 +55,7 @@ class BaseSpider(abc.ABC):
 
 
 class SonetSpider(BaseSpider):
-    url = "http://www.princessconnect.so-net.tw/news/"
+    url = "https://www.princessconnect.so-net.tw/news/"
     src_name = "台服官网"
 
     @staticmethod

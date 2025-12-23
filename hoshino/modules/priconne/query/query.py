@@ -3,7 +3,7 @@ import httpx
 import json
 import os
 import itertools
-from bilibili_api import article, user, Credential
+from bilibili_api import article, opus, user
 from datetime import datetime
 from hoshino import config, util, R
 from hoshino.typing import CQEvent
@@ -140,36 +140,31 @@ async def send_image(url):
     return R.img(f'priconne/quick/{file_name}').cqcode
 
 
-async def send_image_tw_node(urls, height_limit):
-    found = False
+async def send_image_tw_article(urls, len_limit):
+    cqcode = ''
     for url in urls:
         file_name = url.split('/')[-1]
         img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
         if not os.path.exists(img_path):
             await download_image(img_path, url)
-        # JAG: Check image height to decide the real future gacha
+        # Check if the size of the image is satisfied
         img = R.img(f'priconne/quick/{file_name}').open()
         width, height = img.size
-        # Return the 千里眼 and 专二表
-        if found:
-            return first_cqcode + R.img(f'priconne/quick/{file_name}').cqcode
-        elif height > height_limit:
-            found = True
-            first_cqcode = R.img(f'priconne/quick/{file_name}').cqcode 
+        if max(height, width) < len_limit: continue
+    return cqcode
 
 
-async def send_image_tw_ops(nodes, height_limit):
-    for i in range(len(nodes)):
-        if nodes[i]['height'] > height_limit:
-            cqcode = ''
-            for j in range(i, min(i + 2, len(nodes))):
-                file_name = nodes[j]['url'].split('/')[-1]
-                img_path = os.path.join(R.img('priconne').path, 
-                                        f'quick/{file_name}')
-                if not os.path.exists(img_path):
-                    await download_image(img_path, nodes[j]['url'])
-                cqcode += R.img(f'priconne/quick/{file_name}').cqcode
-            return cqcode
+async def send_image_tw_opus(images, len_limit):
+    cqcode = ''
+    for im in images:
+        # Check if the size of the image is satisfied
+        if max(im.height, im.width) < len_limit: continue
+        file_name = im.url.split('/')[-1]
+        img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
+        if not os.path.exists(img_path):
+            await download_image(img_path, url)
+        cqcode += R.img(f'priconne/quick/{file_name}').cqcode
+    return cqcode
 
 
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
@@ -188,39 +183,25 @@ async def future_gacha(bot, ev):
     if is_tw:
         # JAG: Cookies are manually obtained from the browser
         # https://nemo2011.github.io/bilibili-api/#/get-credential
-        credential = Credential(**config.priconne.bili_cookies)
-        u = user.User(477616791, credential=credential)
-        articles = await u.get_articles()
-        # Find article titled '千里眼' from most recent to oldest
-        for ar in articles['articles']:
-            if '千里眼' in ar['title']: break
+        #credential = Credential(**config.priconne.bili_cookies)
+        u = user.User(477616791)
+        # Bilibili has changed all the articles to opus
+        opus = await u.get_opus()
+        # Find opus titled '千里眼' from most recent to oldest
+        for op in opus['items']:
+            if '千里眼' in op['content']: break
         else: return
         # Sleep for 1 second
         await asyncio.sleep(1)
-        # Fetch article content
-        ar = article.Article(ar['id'])
-        # Sleep for 1 second
-        await asyncio.sleep(1)
-        await ar.fetch_content()
-        # Check if the article is formulated as ops or not
-        if 'text' in ar.json()['children'][0]:
-            ops = json.loads(ar.json()['children'][0]['text'])['ops']
-            nodes = [node['insert']['native-image'] for node in ops \
-                     if 'native-image' in node['insert']]
-            await bot.send(ev, await send_image_tw_ops(nodes, 2400), at_sender=True)
-        else:
-            nodes = [node['url'] for node in ar.json()['children'] \
-                     if node['type'] == 'ImageNode']
-            await bot.send(ev, await send_image_tw_node(nodes, 2400), at_sender=True)
+        # Fetch the image urls
+        images = await op.get_images()
+        # Return 千里眼 and 专二表
+        await bot.send(ev, await send_image_tw_opus(images, 2400), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
-        ar = article.Article(15264705)
-        # Sleep for 1 second
-        await asyncio.sleep(1)
-        await ar.fetch_content()
-        # Find first image node
-        for node in ar.json()['children']:
-            if node['type'] == 'ImageNode': break
-        else: return
-        url = node['url']
-        await bot.send(ev, await send_image(url), at_sender=True)
+        #ar = article.Article(15264705)
+        op = opus.Opus(627142818102263773)
+        images = await op.get_images()
+        if not images: return
+        # Return the first image in the opus
+        await bot.send(ev, await send_image(images[0].url), at_sender=True)

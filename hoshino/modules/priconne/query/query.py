@@ -186,9 +186,9 @@ async def future_gacha(bot, ev):
         #credential = Credential(**config.priconne.bili_cookies)
         u = user.User(477616791)
         # Bilibili has changed all the articles to opus
-        opus = await u.get_opus()
+        ops = await u.get_opus()
         # Find opus titled '千里眼' from most recent to oldest
-        for op in opus['items']:
+        for op in ops['items']:
             if '千里眼' in op['content']: break
         else: return
         # Sleep for 1 second

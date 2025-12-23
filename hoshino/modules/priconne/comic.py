@@ -99,8 +99,8 @@ async def download_comic(id_):
     with open(os.path.join(save_dir, 'index.json'), 'w', encoding='utf8') as f:
         json.dump(index, f, ensure_ascii=False)
 
-
-@sv.scheduled_job('cron', minute='*/5', second='25')
+# The comic is no longer updated.
+#@sv.scheduled_job('cron', minute='*/5', second='25')
 #@sv.scheduled_job('cron', hour='*/6')
 async def update_seeker():
     '''

@@ -191,6 +191,8 @@ async def future_gacha(bot, ev):
         for op in ops['items']:
             if '千里眼' in op['content']: break
         else: return
+        # Sleep for 1 second
+        await asyncio.sleep(1)
         op = opus.Opus(op['opus_id'])
         # Fetch the image urls
         images = await op.get_images()

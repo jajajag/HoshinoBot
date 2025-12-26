@@ -55,16 +55,16 @@ class BaseSpider(abc.ABC):
 
 
 class SonetSpider(BaseSpider):
-    url = "http://www.princessconnect.so-net.tw/news/"
+    url = "https://www.princessconnect.so-net.tw/news/"
     src_name = "台服官网"
 
     @staticmethod
     async def get_items(resp:aiorequests.AsyncResponse):
         soup = BeautifulSoup(await resp.text, 'lxml')
         return [
-            Item(idx=dd.a["href"],
-                 content=f"{dd.text}\n▲www.princessconnect.so-net.tw{dd.a['href']}"
-            ) for dd in soup.find_all("dd")
+            Item(idx=li.a["href"],
+                 content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
+            ) for li in soup.select("article.news_con ul>li")
         ]
 
 

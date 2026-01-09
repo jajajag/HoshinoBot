@@ -183,7 +183,7 @@ async def future_gacha(bot, ev):
     if is_tw:
         # JAG: Cookies are manually obtained from the browser
         # https://nemo2011.github.io/bilibili-api/#/get-credential
-        #credential = Credential(**config.priconne.bili_cookies)
+        credential = Credential(**config.priconne.bili_cookies)
         u = user.User(477616791)
         # Bilibili has changed all the articles to opus
         ops = await u.get_opus()
@@ -193,7 +193,7 @@ async def future_gacha(bot, ev):
         else: return
         # Sleep for 1 second
         await asyncio.sleep(1)
-        op = opus.Opus(op['opus_id'])
+        op = opus.Opus(op['opus_id'], credential=credential)
         # Fetch the image urls
         images = await op.get_images()
         # Return 千里眼 and 专二表
@@ -201,7 +201,8 @@ async def future_gacha(bot, ev):
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         #ar = article.Article(15264705)
-        op = opus.Opus(627142818102263773)
+        credential = Credential(**config.priconne.bili_cookies)
+        op = opus.Opus(627142818102263773, credential=credential)
         images = await op.get_images()
         if not images: return
         # Return the first image in the opus

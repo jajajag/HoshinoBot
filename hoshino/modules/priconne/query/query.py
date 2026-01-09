@@ -3,7 +3,7 @@ import httpx
 import json
 import os
 import itertools
-from bilibili_api import article, opus, user
+from bilibili_api import article, opus, user, Credential
 from datetime import datetime
 from hoshino import config, util, R
 from hoshino.typing import CQEvent

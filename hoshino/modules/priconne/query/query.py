@@ -162,7 +162,7 @@ async def send_image_tw_opus(images, len_limit):
         file_name = im.url.split('/')[-1]
         img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
         if not os.path.exists(img_path):
-            await download_image(img_path, url)
+            await download_image(img_path, im.url)
         cqcode += R.img(f'priconne/quick/{file_name}').cqcode
     return cqcode
 

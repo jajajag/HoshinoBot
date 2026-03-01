@@ -184,7 +184,9 @@ async def future_gacha(bot, ev):
         # JAG: Cookies are manually obtained from the browser
         # https://nemo2011.github.io/bilibili-api/#/get-credential
         credential = Credential(**config.priconne.bili_cookies)
-        u = user.User(477616791)
+        if await credential.check_refresh():
+            await credential.refresh()
+        u = user.User(477616791, credential)
         # Bilibili has changed all the articles to opus
         ops = await u.get_opus()
         # Find opus titled '千里眼' from most recent to oldest
@@ -202,6 +204,8 @@ async def future_gacha(bot, ev):
     elif is_cn:
         #ar = article.Article(15264705)
         credential = Credential(**config.priconne.bili_cookies)
+        if await credential.check_refresh():
+            await credential.refresh()
         op = opus.Opus(627142818102263773, credential=credential)
         images = await op.get_images()
         if not images: return

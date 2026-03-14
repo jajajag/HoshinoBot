@@ -158,7 +158,8 @@ class ImageCache:
         try:
             # Return the first image in the opus
             images = await op.get_images()
-            self.cn_image_cache = [images[0].url]
+            self.cn_image_cache = [images[1].url]
+            print(self.cn_image_cache)
         except Exception as e:
             return
 

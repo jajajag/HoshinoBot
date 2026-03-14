@@ -125,46 +125,64 @@ async def dragon(bot, ev):
     await util.silence(ev, 60)
 
 
-# Borrowed from https://github.com/azmiao/uma_plugin
-async def download_image(img_path, url):
-    response = httpx.get(url, timeout=10)
-    with open(img_path, 'wb') as f:
-        f.write(response.read())
+class ImageCache:
+    def __init__(self):
+        self.cn_image_cache = []
+        self.tw_image_cache = []
+
+    # Borrowed from https://github.com/azmiao/uma_plugin
+    async def download_image(self, img_path, url):
+        #response = httpx.get(url, timeout=10)
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.get(url)
+        with open(img_path, 'wb') as f:
+            #f.write(response.read())
+            f.write(response.content)
+
+    async def send_images(self, server):
+        cqcode, urls = '', []
+        if server == 'cn':
+            urls = self.cn_image_cache
+        elif server == 'tw':
+            urls = self.tw_image_cache
+        for url in urls:
+            file_name = url.split('/')[-1]
+            img_path = os.path.join(R.img('priconne').path, 
+                                    f'quick/{file_name}')
+            if not os.path.exists(img_path):
+                await self.download_image(img_path, url)
+            cqcode += R.img(f'priconne/quick/{file_name}').cqcode
+        return cqcode
+
+    async def cache_image_cn(self, op):
+        try:
+            # Return the first image in the opus
+            images = await op.get_images()
+            self.cn_image_cache = [images[0].url]
+        except Exception as e:
+            return
+
+    async def cache_image_tw(self, u, len_limit=2400):
+        try:
+            ops = await u.get_opus()
+            # Find opus titled '千里眼' from most recent to oldest
+            for op in ops['items']:
+                if '千里眼' in op['content']: break
+            else: return
+            # Sleep for 1 second
+            await asyncio.sleep(1)
+            op = opus.Opus(op['opus_id'])
+            images = await op.get_images()
+            self.tw_image_cache = []
+            # Check if the size of the image is satisfied
+            for im in images:
+                if max(im.height, im.width) < len_limit: continue
+                self.tw_image_cache.append(im.url)
+        except Exception as e:
+            return
 
 
-async def send_image(url):
-    file_name = url.split('/')[-1]
-    img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
-    if not os.path.exists(img_path):
-        await download_image(img_path, url)
-    return R.img(f'priconne/quick/{file_name}').cqcode
-
-
-async def send_image_tw_article(urls, len_limit):
-    cqcode = ''
-    for url in urls:
-        file_name = url.split('/')[-1]
-        img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
-        if not os.path.exists(img_path):
-            await download_image(img_path, url)
-        # Check if the size of the image is satisfied
-        img = R.img(f'priconne/quick/{file_name}').open()
-        width, height = img.size
-        if max(height, width) < len_limit: continue
-    return cqcode
-
-
-async def send_image_tw_opus(images, len_limit):
-    cqcode = ''
-    for im in images:
-        # Check if the size of the image is satisfied
-        if max(im.height, im.width) < len_limit: continue
-        file_name = im.url.split('/')[-1]
-        img_path = os.path.join(R.img('priconne').path, f'quick/{file_name}')
-        if not os.path.exists(img_path):
-            await download_image(img_path, im.url)
-        cqcode += R.img(f'priconne/quick/{file_name}').cqcode
-    return cqcode
+image_cache = ImageCache()
 
 
 @sv.on_rex(r'^(\*?([台国陆b])服?)?千里眼$')
@@ -173,7 +191,7 @@ async def future_gacha(bot, ev):
     is_tw = match.group(2) == '台'
     is_cn = match.group(2) and match.group(2) in '国陆b'
     if not is_tw and not is_cn:
-        await bot.send(ev, '\n请问您要查询哪个服务器的千里眼？'\
+        await bot.send(ev, '\n请问您要查询哪个服务器的千里眼？'
                 '\n(台|国|陆|b)千里眼', at_sender=True)
         return
 
@@ -181,33 +199,14 @@ async def future_gacha(bot, ev):
     # 源自UP主Kumiko_kawaii：https://space.bilibili.com/511146986（已弃坑）
     # 源自UP主盛夏丶丶丶丶丶丶丶：https://space.bilibili.com/477616791
     if is_tw:
-        # JAG: Cookies are manually obtained from the browser
         # https://nemo2011.github.io/bilibili-api/#/get-credential
-        credential = Credential(**config.priconne.bili_cookies)
-        if await credential.check_refresh():
-            await credential.refresh()
-        u = user.User(477616791, credential)
-        # Bilibili has changed all the articles to opus
-        ops = await u.get_opus()
-        # Find opus titled '千里眼' from most recent to oldest
-        for op in ops['items']:
-            if '千里眼' in op['content']: break
-        else: return
-        # Sleep for 1 second
-        await asyncio.sleep(1)
-        op = opus.Opus(op['opus_id'], credential=credential)
-        # Fetch the image urls
-        images = await op.get_images()
-        # Return 千里眼 and 专二表
-        await bot.send(ev, await send_image_tw_opus(images, 2400), at_sender=True)
+        #credential = Credential(**config.priconne.bili_cookies)
+        u = user.User(477616791)
+        await image_cache.cache_image_tw(u)
+        await bot.send(ev, await image_cache.send_images('tw'), at_sender=True)
     # 源自UP主Columba-丘比：https://space.bilibili.com/25586360
     elif is_cn:
         #ar = article.Article(15264705)
-        credential = Credential(**config.priconne.bili_cookies)
-        if await credential.check_refresh():
-            await credential.refresh()
-        op = opus.Opus(627142818102263773, credential=credential)
-        images = await op.get_images()
-        if not images: return
-        # Return the first image in the opus
-        await bot.send(ev, await send_image(images[0].url), at_sender=True)
+        op = opus.Opus(627142818102263773)
+        await image_cache.cache_image_cn(op)
+        await bot.send(ev, await image_cache.send_images('cn'), at_sender=True)

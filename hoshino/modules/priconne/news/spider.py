@@ -53,7 +53,6 @@ class BaseSpider(abc.ABC):
         return '\n'.join(map(lambda i: i.content, items))
 
 
-
 class SonetSpider(BaseSpider):
     url = "https://www.princessconnect.so-net.tw/news/"
     src_name = "台服官网"
@@ -68,10 +67,12 @@ class SonetSpider(BaseSpider):
         ]
 
 
-
 class BiliSpider(BaseSpider):
-    url = "http://api.biligame.com/news/list?gameExtensionId=267&positionId=2&pageNum=1&pageSize=7&typeId="
+    url = "https://api.biligame.com/news/list?gameExtensionId=267&positionId=2&pageNum=1&pageSize=7&typeId="
     src_name = "B服官网"
+    header = {
+        'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
+    }
 
     @staticmethod
     async def get_items(resp:aiorequests.AsyncResponse):

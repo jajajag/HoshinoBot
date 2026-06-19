@@ -42,22 +42,19 @@ async def llm(bot, ev: CQEvent):
     llm_limiter.increase(user_id)
 
     try:
-        completion = await asyncio.to_thread(
-            client.chat.completions.create,
-            # deepseek: deepseek-chat, deepseek-reasoner
-            # chatgpt: gpt-4o-mini-search-preview, gpt-4o-mini
-            model='gpt-4o-mini-search-preview',
-            web_search_options={},
-            messages=[{"role": "user", "content": content}],
-            max_tokens=max_output_tokens,
-            # Control the temperature of the response (0 to 1, default 0.7)
-            #temperature=0.7,
-            # Whether to return the response immediately
-            #stream=False
+        response = await asyncio.to_thread(
+            client.responses.create,
+            model='gpt-5-mini',
+            tools=[{
+                "type": "web_search",
+                "search_context_size": "low",
+            }],
+            input=content,
+            max_output_tokens=max_output_tokens,
         )
     except:
         # Insufficient balance
         await bot.finish(ev, '没钳了没钳了！', at_sender=True)
 
     # Get the response
-    await bot.send(ev, completion.choices[0].message.content)
+    await bot.send(ev, response.output_text)

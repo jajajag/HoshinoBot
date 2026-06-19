@@ -1,5 +1,6 @@
 import asyncio
 import re
+from aiocqhttp.message import escape
 from hoshino import config, Service
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter
@@ -57,4 +58,4 @@ async def llm(bot, ev: CQEvent):
         await bot.finish(ev, '没钳了没钳了！', at_sender=True)
 
     # Get the response
-    await bot.send(ev, response.output_text)
+    await bot.send(ev, escape(response.output_text))

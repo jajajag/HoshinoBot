@@ -18,7 +18,7 @@ sv = Service('llm', help_=sv_help, bundle='llm',
 # Maximum number of questions that can be asked per day
 _max_daily = 10
 llm_limiter = DailyNumberLimiter(_max_daily)
-max_output_tokens = 1000
+max_output_tokens = 10000
 
 
 # Initialize the openai client
@@ -47,8 +47,8 @@ async def llm(bot, ev: CQEvent):
             client.responses.create,
             model='gpt-5-mini',
             tools=[{
-                "type": "web_search",
-                "search_context_size": "low",
+                'type': 'web_search',
+                'search_context_size': 'low',
             }],
             input=content,
             max_output_tokens=max_output_tokens,

@@ -32,7 +32,7 @@ nnk(来一井|十连|单抽)
 lssv: 查看模块的开关状态
 (启|禁)用XX: 开关模块
 ※Hoshino开源Project: 
-修改自Ice9Coffee/HoshinoBot
+Ice9Coffee/HoshinoBot
 '''.strip()
 # 魔改请保留 github.com/Ice9Coffee/HoshinoBot 项目地址
 

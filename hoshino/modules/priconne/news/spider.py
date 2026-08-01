@@ -62,6 +62,7 @@ class SonetSpider(BaseSpider):
         soup = BeautifulSoup(await resp.text, 'lxml')
         return [
             Item(idx=li.a["href"],
+                 # JAG：防止QQ弹警告不再发送连接
                  #content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
                  content=f"{li.a.text}"
             ) for li in soup.select("article.news_con ul>li")

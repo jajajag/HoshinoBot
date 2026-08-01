@@ -62,7 +62,7 @@ class SonetSpider(BaseSpider):
         soup = BeautifulSoup(await resp.text, 'lxml')
         return [
             Item(idx=li.a["href"],
-                 content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
+                 #content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
                  content=f"{li.a.text}\n"
             ) for li in soup.select("article.news_con ul>li")
         ]

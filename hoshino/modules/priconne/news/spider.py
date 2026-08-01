@@ -64,7 +64,7 @@ class SonetSpider(BaseSpider):
             Item(idx=li.a["href"],
                  # JAG：防止QQ弹警告不再发送连接
                  #content=f"{li.a.text}\n▲www.princessconnect.so-net.tw{li.a['href']}"
-                 content=f"{li.a.text}"
+                 content=f"🔹{li.a.text}"
             ) for li in soup.select("article.news_con ul>li")
         ]
 
@@ -82,7 +82,7 @@ class BiliSpider(BaseSpider):
         items = [
             Item(idx=n["id"],
                  #content="{title}\n▲game.bilibili.com/pcr/news.html#detail={id}".format_map(n)
-                 content="{title}".format_map(n)
+                 content="🔹{title}".format_map(n)
             ) for n in content["data"]
         ]
         return items
@@ -109,6 +109,6 @@ class JpSpider(BaseSpider):
             items.append(Item(
                 idx=news_id,
                 #content=f"{t}\nhttps://priconne-redive.jp/news/event/{news_id}/"
-                content=f"{t}"
+                content=f"🔹{t}"
             ))
         return items

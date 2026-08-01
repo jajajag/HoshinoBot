@@ -39,7 +39,8 @@ async def send_news(bot, ev, spider:BaseSpider, max_num=5):
         await spider.get_update()
     news = spider.item_cache
     news = news[:min(max_num, len(news))]
-    await bot.send(ev, spider.format_items(news), at_sender=True)
+    # JAG：第一行空行
+    await bot.send(ev, '\n' + spider.format_items(news), at_sender=True)
 
 @svtw.on_fullmatch('台服新闻')
 async def send_sonet_news(bot, ev):

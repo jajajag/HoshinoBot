@@ -6,7 +6,6 @@ sv = Service('_help_', manage_priv=priv.SUPERUSER, visible=False)
 TOP_MANUAL = '''
 以下是nnk目前的功能
 【简单指令】
-(国|台|日)作业: 会战作业
 (国|台|日)rank: rank表
 (国|台|日)服日程: 日程
 (国|台|日)服新闻: 新闻
@@ -31,11 +30,12 @@ lssv: 查看模块的开关状态
 Ice9Coffee/HoshinoBot
 '''.strip()
 # 魔改请保留 github.com/Ice9Coffee/HoshinoBot 项目地址
+# (国|台|日)作业: 会战作业
+# (涩图|来一张XX涩图)
+# 那我问你:XX: 大模型问答
 # 今日老婆: 今天的群老婆
 # 头像表情包: 头像表情包
 # 马娘帮助: 赛马娘相关
-# (涩图|来一张XX涩图)
-# 那我问你:XX: 大模型问答
 
 
 def gen_service_manual(service:  Service, gid:  int): 

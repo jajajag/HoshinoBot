@@ -30,7 +30,7 @@ async def rank_sheet(bot, ev):
                 at_sender=True)
 
 
-@sv.on_rex(r'^(\*?([日台国陆b])服?)?作业$')
+#@sv.on_rex(r'^(\*?([日台国陆b])服?)?作业$')
 async def rank_sheet(bot, ev):
     match = ev['match']
     is_jp = match.group(2) == '日'

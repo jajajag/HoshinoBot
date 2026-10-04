@@ -19,7 +19,6 @@ nnk(来一井|十连|单抽)
 官漫XXX: 第XXX话官漫
 大家说X回答X: 你问我答
 (转秒XX|合刀XX XX XX)
-那我问你:XX: 大模型问答
 【查详细用法】
 竞技场帮助:台二(JJC|公会)排名(查询|推送)
 帮助抽老婆: 抽(牛)老婆
@@ -36,6 +35,7 @@ Ice9Coffee/HoshinoBot
 # 头像表情包: 头像表情包
 # 马娘帮助: 赛马娘相关
 # (涩图|来一张XX涩图)
+# 那我问你:XX: 大模型问答
 
 
 def gen_service_manual(service:  Service, gid:  int): 

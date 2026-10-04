@@ -12,21 +12,18 @@ TOP_MANUAL = '''
 (国|台|日)服新闻: 新闻
 (国|台)千里眼: 千里眼
 怎么拆: JJC阵容查询
-今日老婆: 今天的群老婆
 抽签: 如抽签，抽中二签
 选图(列表|XX): 表情模板
 XX.jpg: 生成XX的表情
 nnk(来一井|十连|单抽)
 官漫XXX: 第XXX话官漫
 大家说X回答X: 你问我答
-(涩图|来一张XX涩图)
 (转秒XX|合刀XX XX XX)
 那我问你:XX: 大模型问答
 【查详细用法】
 竞技场帮助:台二(JJC|公会)排名(查询|推送)
-马娘帮助: 赛马娘相关
-头像表情包: 头像表情包
 帮助抽老婆: 抽(牛)老婆
+团战测速：星陨计划团战
 帮助pjsk贴纸: pjsk表情
 【管理】
 lssv: 查看模块的开关状态
@@ -35,6 +32,10 @@ lssv: 查看模块的开关状态
 Ice9Coffee/HoshinoBot
 '''.strip()
 # 魔改请保留 github.com/Ice9Coffee/HoshinoBot 项目地址
+# 今日老婆: 今天的群老婆
+# 头像表情包: 头像表情包
+# 马娘帮助: 赛马娘相关
+# (涩图|来一张XX涩图)
 
 
 def gen_service_manual(service:  Service, gid:  int): 

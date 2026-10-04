@@ -104,7 +104,8 @@ async def _arena_query(bot, ev: CQEvent, region: int):
     if len(defen) > 5:
         await bot.finish(ev, '编队不能多于5名角色', at_sender=True)
     if len(defen) < 5:
-        await bot.finish(ev, '由于数据库限制，少于5名角色的检索条件请移步pcrdfans.com进行查询', at_sender=True)
+        #await bot.finish(ev, '由于数据库限制，少于5名角色的检索条件请移步pcrdfans.com进行查询', at_sender=True)
+        await bot.finish(ev, '由于数据库限制，少于5名角色的检索条件请移步pcrdfans进行查询', at_sender=True)
     if len(defen) != len(set(defen)):
         await bot.finish(ev, '编队中含重复角色', at_sender=True)
     if any(chara.is_npc(i) for i in defen):
@@ -120,16 +121,20 @@ async def _arena_query(bot, ev: CQEvent, region: int):
     except hoshino.aiorequests.HTTPError as e:
         code = e.response["code"]
         if code == 117 or code == -429:
-            await bot.finish(ev, "高峰期服务器限流！请前往pcrdfans.com/battle")
+            #await bot.finish(ev, "高峰期服务器限流！请前往pcrdfans.com/battle")
+            await bot.finish(ev, "高峰期服务器限流！请前往pcrdfans/battle")
         else:
-            await bot.finish(ev, f'code{code} 查询出错，请联系维护组调教\n请先前往pcrdfans.com进行查询', at_sender=True)
+            #await bot.finish(ev, f'code{code} 查询出错，请联系维护组调教\n请先前往pcrdfans.com进行查询', at_sender=True)
+            await bot.finish(ev, f'code{code} 查询出错，请联系维护组调教\n请先前往pcrdfans进行查询', at_sender=True)
     sv.logger.info('Got response!')
 
     # 处理查询结果
     if res is None:
-        await bot.finish(ev, '数据库未返回数据，请再次尝试查询或前往pcrdfans.com', at_sender=True)
+        #await bot.finish(ev, '数据库未返回数据，请再次尝试查询或前往pcrdfans.com', at_sender=True)
+        await bot.finish(ev, '数据库未返回数据，请再次尝试查询或前往pcrdfans', at_sender=True)
     if not len(res):
-        await bot.finish(ev, '抱歉没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
+        #await bot.finish(ev, '抱歉没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
+        await bot.finish(ev, '抱歉没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans', at_sender=True)
     res = res[:min(6, len(res))]    # 限制显示数量，截断结果
 
     # 发送回复
@@ -163,7 +168,8 @@ async def _arena_query(bot, ev: CQEvent, region: int):
     ]
     if region == 1:
         msg.append('※使用"b怎么拆"或"台怎么拆"可按服过滤')
-    msg.append('Support by pcrdfans_com')
+    #msg.append('Support by pcrdfans_com')
+    msg.append('Support by pcrdfans')
 
     sv.logger.debug('Arena sending result...')
     await bot.send(ev, '\n'.join(msg))

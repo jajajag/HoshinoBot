@@ -122,7 +122,8 @@ async def gen_team_pic(team, size=64, star_slot_verbose=True):
 
 
 async def download_chara_icon(id_, star):
-    url = f'https://redive.estertion.win/icon/unit/{id_}{star}1.webp'
+    # url = f'https://redive.estertion.win/icon/unit/{id_}{star}1.webp'
+    url = f'https://wthee.xyz/redive/jp/resource/icon/unit/{id_}{star}1.webp'
     save_path = R.img(f'priconne/unit/icon_unit_{id_}{star}1.png').path
     logger.info(f'Downloading chara icon from {url}')
     try:
@@ -247,13 +248,28 @@ class Chara:
         return pic
 
 
-@sucmd('download-pcr-chara-icon', force_private=False, aliases=('下载角色头像'))
+@sucmd('download-pcr-chara-icon', force_private=False, aliases=('下载角色头像', '更新角色头像'))
 async def download_pcr_chara_icon(sess: CommandSession):
     '''
-    覆盖更新1、3、6星头像
+    指定角色时覆盖更新1、3、6星头像，不指定时补齐所有角色缺失的头像
     '''
     try:
-        ch = fromname(sess.current_arg_text.strip())
+        name = sess.current_arg_text.strip()
+        if not name:
+            tasks = []
+            for id_ in _pcr_data.CHARA_NAME:
+                if is_npc(id_):
+                    continue
+                for star in (6, 3, 1):
+                    res = R.img(f'priconne/unit/icon_unit_{id_}{star}1.png')
+                    if not res.exist:
+                        tasks.append(download_chara_icon(id_, star))
+            ret = await asyncio.gather(*tasks)
+            succ = sum(r == 0 for r in ret)
+            await sess.send(f'ok! downloaded {succ}/{len(ret)} icons.')
+            return
+
+        ch = fromname(name)
         assert ch.id != UNKNOWN, '未知角色名'
         await asyncio.gather(
             download_chara_icon(ch.id, 6),

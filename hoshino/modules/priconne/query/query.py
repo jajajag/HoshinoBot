@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import httpx
 import json
 import os
@@ -139,22 +138,15 @@ class ImageCache:
             urls = self.cn_image_cache
         elif server == 'tw':
             urls = self.tw_image_cache
-    
         for url in urls:
             file_name = url.split('/')[-1]
             img_path = os.path.join(
                 R.img('priconne').path,
                 f'quick/{file_name}'
             )
-    
             if not os.path.exists(img_path):
                 await self.download_image(img_path, url)
-    
-            with open(img_path, 'rb') as f:
-                img_base64 = base64.b64encode(f.read()).decode('ascii')
-    
-            cqcode += f'[CQ:image,file=base64://{img_base64}]'
-    
+            cqcode += str(R.img(f'priconne/quick/{file_name}').cqcode)
         return cqcode
 
     async def cache_image_cn(self, op):

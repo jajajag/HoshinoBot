@@ -158,7 +158,7 @@ class ImageCache:
         except Exception as e:
             return
 
-    async def cache_image_tw(self, u, len_limit=2400):
+    async def cache_image_tw(self, u):
         try:
             ops = await u.get_opus()
             # Find opus titled '千里眼' from most recent to oldest
@@ -168,12 +168,12 @@ class ImageCache:
             # Sleep for 1 second
             await asyncio.sleep(1)
             op = opus.Opus(op['opus_id'])
-            images = await op.get_images()
-            self.tw_image_cache = []
-            # Check if the size of the image is satisfied
-            for im in images:
-                if max(im.height, im.width) < len_limit: continue
-                self.tw_image_cache.append(im.url)
+            images = await op.get_images_raw_info()
+            keywords = ('千里眼', '专二', '专三', 'SP专一', 'SP一专')
+            self.tw_image_cache = [
+                im['url'] for im in images
+                if any(k in (im.get('comment') or '').upper() for k in keywords)
+            ]
         except Exception as e:
             return
 
